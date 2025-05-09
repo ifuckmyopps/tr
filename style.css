@@ -143,7 +143,7 @@ body {
     width: 20px;
     height: 20px;
     fill: none;
-    stroke: var(--text-primary);
+    stroke: #0381ff;
     stroke-width: 2;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
@@ -474,8 +474,8 @@ body {
     
     .theme-switcher, .settings {
         max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
+        margin-left: 5px;
+        margin-right: 5px;
     }
 }
 
