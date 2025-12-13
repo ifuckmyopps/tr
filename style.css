@@ -474,8 +474,8 @@ body {
     
     .theme-switcher, .settings {
         max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
+        margin-left: 5px;
+        margin-right: 5px;
     }
 }
 
