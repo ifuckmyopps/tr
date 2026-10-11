@@ -1,170 +1,881 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradeAi| Профессиональная торговая аналитика</title>
-    <meta name="description" content="Получите профессиональные торговые сигналы с высокой точностью для валютных пар">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981'%3E%3Cpath d='M3 3v18h18V3H3zm16 16H5V5h14v14zM11 7h2v2h-2V7zm4 0h2v2h-2V7zm-8 0h2v2H7V7zm8 4h2v2h-2v-2zm-4 0h2v2h-2v-2zm-4 0h2v2H7v-2zm8 4h2v2h-2v-2zm-4 0h2v2h-2v-2zm-4 0h2v2H7v-2z'/%3E%3C/svg%3E">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal App</title>
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:'Montserrat', sans-serif;
+  background:url('background.jpg') no-repeat center center fixed;
+  background-size:cover;
+  color:#e8eef6;
+}
+
+.container{
+  padding:16px;
+  max-width:420px;
+  margin:auto;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+/* TOP */
+.status{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding: 10px 16px;
+  background:#0f1a2a;
+  border-radius:16px;
+  border: 1px solid #7c6942;
+  font-size: 14px;
+}
+
+/* VIP */
+.vip{
+  background: #11146f78;
+  color: #f2dada;
+  padding:6px 14px;
+  border-radius:14px;
+  font-weight:600;
+}
+
+/* CONNECTED + PULSE */
+.connected{
+  color:#2fd84a;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.pulse{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#16c47f;
+  animation:pulse 1.6s ease-out infinite;
+}
+
+@keyframes pulse{
+  0%{transform:scale(0.6);opacity:0.9}
+  80%{transform:scale(1.9);opacity:0}
+  100%{opacity:0}
+}
+
+/* CARD */
+.card{
+  background: #141414ab;
+  border-radius: 16px;
+  border: 1px solid #7b6941;
+  padding: 16px;
+}
+
+.main-btn{
+  width:100%;
+  height:56px;
+  border:none;
+  border-radius:16px;
+  background: linear-gradient(#ae7d16, #593a0b);
+  color:white;
+  font-size:18px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+/* TRADES */
+.trade-row{
+  display:flex;
+  justify-content:space-between;
+  padding:10px;
+  border-bottom:1px dashed rgba(255,255,255,.06);
+  opacity:0;
+  transform:translateY(-20px);
+  transition:.5s;
+    font-size: 14px;
+}
+.trade-row.show{opacity:1;transform:translateY(0);font-size: 14px;}
+.green{color:#22c55e;font-weight:700;}
+.red{color:#ff5c5c;font-weight:700;}
+
+/* OVERLAY */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.8);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+.loader{
+  border:4px solid #eee;
+  border-top:4px solid #3b6ef5;
+  border-radius:50%;
+  width:50px;
+  height:50px;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* CHART */
+.chart-wrapper{
+  border-radius:2px;
+  overflow:hidden;
+}
+.chart-box{
+  width:100%;
+  aspect-ratio:1/1;
+}
+
+/* SIGNAL */
+.signal-box{
+  height:56px;
+  border-radius:4px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:12px;
+  opacity:0;
+  transform:translateY(-20px);
+  transition:.5s;
+  font-size:20px;
+  font-weight:700;
+}
+.signal-box.show{opacity:1;transform:translateY(0);}
+
+.pair-box{
+            background: linear-gradient(#544827, #382e0f);
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 6px 0 rgb(50 32 4 / 28%);
+    transition: .1s;
+}
+.pair-box.active{
+  transform:translateY(3px);
+  box-shadow:0 2px 0 rgba(0,0,0,0.25);
+}
+
+.time-box{background: #3e3824c2;
+    color: #c7bf42;}
+.buy-box{  background: #104927;
+    border: 1px solid #3cc91b99;
+    color: #3cc91b;}
+.sell-box{ background: #441316;
+    border: 1px solid #d021218a;
+    color: #d02121;}
+
+/* TIMER */
+.timer-wrap{
+  margin-top:12px;
+  text-align:center;
+}
+.bar{
+  height: 10px;
+  background: #222;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #7b6941;
+}
+.progress{
+  height:100%;
+  background: #b29130;
+  width:100%;
+}
+.timer-text{
+  margin-top: 6px;
+  font-size: 14px;
+  opacity: .8;
+  color: #b29231;
+}
+
+.back-btn{
+      width: 100%;
+    height: 52px;
+    margin-top: 14px;
+    border: none;
+    border-radius: 74px;
+    background: #16171c;
+    border: 1px solid #7979695c;
+    font-size: 16px;
+    color: white;
+}
+
+/* FOOTER */
+.footer{
+  text-align:center;
+  font-size:12px;
+  opacity:.5;
+  padding:10px 0;
+}
+
+.hidden{display:none;}
+    
+    .desc {
+    background: linear-gradient(#1c1a12, #14120c);
+    border: 1px solid #7b6941;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 14px;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #d6cfa3;
+}
+
+/* ---------- стили для блока с гифкой (только этот блок) ---------- */
+.gif-block {
+  padding: 0;                  /* убираем отступы, гифка вплотную к бортикам */
+}
+.gif-block img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;         /* скругление самой гифки */
+}
+
+/* ---------- new overlay styles (added) ---------- */
+.post-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  flex-direction: column;
+  transition: opacity 0.5s;
+}
+.post-overlay.hidden { display: none; }  /* ensure hidden works */
+
+.post-content {
+  background: #1c1a12;
+  border: 1px solid #7b6941;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  max-width: 296px;
+    width: 90%;
+}
+
+.btn-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.profit-btn {
+  padding: 12px 56px;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  color: white;
+  transition: transform 0.1s;
+}
+.profit-btn:active {
+  transform: scale(0.97);
+}
+
+.yes-btn {
+  background: #22c55e;
+}
+
+.no-btn {
+  background: #ef4444;
+}
+
+/* snowflake animation */
+.snowflake {
+  position: fixed;
+  top: -10px;
+  z-index: 2000;
+  pointer-events: none;
+  animation: fall linear forwards;
+  color: white;
+  font-size: 1.2em;
+  user-select: none;
+}
+
+@keyframes fall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(360deg); opacity: 0.3; }
+}
+
+/* ============================================================
+   MODE TOGGLE — with smooth sliding pill
+   ============================================================ */
+.mode-toggle{
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+  padding:4px;
+  background:#0f1a2a;
+  border:1px solid #7c6942;
+  border-radius:14px;
+  margin-bottom:14px;
+  overflow:hidden;
+}
+
+/* плавно скользящий ползунок */
+.mode-toggle__slider{
+  position:absolute;
+  top:4px;
+  left:4px;
+  width:calc(50% - 4px);
+  height:calc(100% - 8px);
+  background: linear-gradient(#ae7d16, #593a0b);
+  border-radius:10px;
+  box-shadow: 0 4px 12px rgba(174,125,22,.35);
+  transition: transform .32s cubic-bezier(.22,1,.36,1);
+  z-index:0;
+  pointer-events:none;
+}
+.mode-toggle[data-mode="manual"] .mode-toggle__slider{
+  transform: translateX(100%);
+}
+
+.mode-btn{
+  position:relative;
+  z-index:1;
+  padding:10px;
+  background:transparent;
+  border:none;
+  border-radius:10px;
+  color:#c7bf42;
+  font-family:inherit;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  transition: color .25s ease;
+}
+.mode-btn:hover{ color:#fff; }
+.mode-btn.active{ color:#fff; }
+
+/* ============================================================
+   MANUAL SELECTION (pairs + time)
+   ============================================================ */
+.manual-label{
+  font-size:12px;
+  color:#b29231;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  font-weight:700;
+  margin:20px 0 10px;
+  text-align:left;
+}
+
+.pair-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  max-height:220px;
+  overflow-y:auto;
+  padding:2px;
+  scrollbar-width:thin;
+  scrollbar-color:#7b6941 transparent;
+}
+.pair-grid::-webkit-scrollbar{width:6px;}
+.pair-grid::-webkit-scrollbar-thumb{background:#7b6941;border-radius:6px;}
+
+.pair-chip{
+  padding:12px 4px;
+  background:#1c1a12;
+  border:1px solid #5a4a28;
+  border-radius:10px;
+  color:#d6cfa3;
+  font-family:inherit;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.15s;
+  white-space:nowrap;
+}
+.pair-chip:hover{
+  border-color:#b29130;
+  color:#fff;
+}
+.pair-chip.active{
+  background: linear-gradient(#544827, #382e0f);
+  border-color:#b29130;
+  color:#fff;
+  box-shadow: 0 0 0 1px rgba(178,145,48,.45);
+}
+
+.time-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  margin-bottom: 20px;
+}
+.time-chip{
+  padding:12px 0;
+  background:#1c1a12;
+  border:1px solid #5a4a28;
+  border-radius:10px;
+  color:#d6cfa3;
+  font-family:inherit;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.15s;
+}
+.time-chip:hover{border-color:#b29130;color:#fff;}
+.time-chip.active{
+  background: linear-gradient(#544827, #382e0f);
+  border-color:#b29130;
+  color:#fff;
+  box-shadow: 0 0 0 1px rgba(178,145,48,.45);
+}
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="sidebar">
-            <div class="logo">
-                <h1 id="logo-text">TradeAi| Бот Аналитик</h1>
-            </div>
-            <div class="theme-switcher">
-                <button class="theme-btn" data-theme="light" aria-label="Светлая тема">
-                    <svg class="sun-icon" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                </button>
-                <button class="theme-btn" data-theme="dark" aria-label="Темная тема">
-                    <svg class="moon-icon" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-                </button>
-                <button class="theme-btn" data-theme="crypto" aria-label="Крипто тема">
-                    <svg class="crypto-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                </button>
-            </div>
-            <div class="settings">
-                <div class="settings-header">
-                    <span class="settings-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm-1-11h2v6h-2zm0 8h2v2h-2z"></path>
-                        </svg>
-                    </span>
-                    <h3>Настройки сигнала</h3>
-                </div>
-                <div class="input-group">
-                    <label id="currency-label">Инструмент</label>
-                    <div class="custom-select">
-                        <div class="select-selected" data-select="currency-pair">EUR/USD</div>
-                        <div class="select-items select-hide" id="currency-pair-items">
-                            <div class="select-item" data-value="EUR/USD">EUR/USD</div>
-                            <div class="select-item" data-value="GBP/USD">GBP/USD</div>
-                            <div class="select-item" data-value="USD/JPY">USD/JPY</div>
-                            <div class="select-item" data-value="USD/CHF">USD/CHF</div>
-                            <div class="select-item" data-value="USD/CAD">USD/CAD</div>
-                            <div class="select-item" data-value="AUD/USD">AUD/USD</div>
-                            <div class="select-item" data-value="NZD/USD">NZD/USD</div>
-                            <div class="select-item" data-value="AUD/NZD">AUD/NZD</div>
-                            <div class="select-item" data-value="GBP/JPY">GBP/JPY</div>
-                            <div class="select-item" data-value="USD/CNH">USD/CNH</div>
-                            <div class="select-item" data-value="EUR/JPY">EUR/JPY</div>
-                            <div class="select-item" data-value="EUR/GBP">EUR/GBP</div>
-                            <div class="select-item" data-value="EUR/CAD">EUR/CAD</div>
-                            <div class="select-item" data-value="GBP/CHF">GBP/CHF</div>
-                            <div class="select-item" data-value="CAD/JPY">CAD/JPY</div>
-                        </div>
-                        <select id="currency-pair" class="hidden-select">
-                            <option>EUR/USD</option>
-                            <option>GBP/USD</option>
-                            <option>USD/JPY</option>
-                            <option>USD/CHF</option>
-                            <option>USD/CAD</option>
-                            <option>AUD/USD</option>
-                            <option>NZD/USD</option>
-                            <option>AUD/NZD</option>
-                            <option>GBP/JPY</option>
-                            <option>USD/CNH</option>
-                            <option>EUR/JPY</option>
-                            <option>EUR/GBP</option>
-                            <option>EUR/CAD</option>
-                            <option>GBP/CHF</option>
-                            <option>CAD/JPY</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label id="timeframe-label">Время</label>
-                    <div class="custom-select">
-                        <div class="select-selected" data-select="timeframe">1 минута</div>
-                        <div class="select-items select-hide" id="timeframe-items">
-                            <div class="select-item" data-value="1 минута">1 минута</div>
-                            <div class="select-item" data-value="2 минуты">2 минуты</div>
-                            <div class="select-item" data-value="3 минуты">3 минуты</div>
-                            <div class="select-item" data-value="4 минуты">4 минуты</div>
-                            <div class="select-item" data-value="5 минут">5 минут</div>
-                        </div>
-                        <select id="timeframe" class="hidden-select">
-                            <option>1 минута</option>
-                            <option>2 минуты</option>
-                            <option>3 минуты</option>
-                            <option>4 минуты</option>
-                            <option>5 минут</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label for="language">Язык</label>
-                    <div class="custom-select">
-                        <div class="select-selected" data-select="language">
-                            <img src="https://flagcdn.com/w20/ru.png" alt="RU" class="flag-icon">
-                            Русский
-                        </div>
-                        <div class="select-items select-hide" id="language-items">
-                            <div class="select-item" data-value="ru">
-                                <img src="https://flagcdn.com/w20/ru.png" alt="RU" class="flag-icon">
-                                Русский
-                            </div>
-                            <div class="select-item" data-value="en">
-                                <img src="https://flagcdn.com/w20/gb.png" alt="EN" class="flag-icon">
-                                English
-                            </div>
-                            <div class="select-item" data-value="uz">
-                                <img src="https://flagcdn.com/w20/uz.png" alt="UZ" class="flag-icon">
-                                O'zbek
-                            </div>
-                        </div>
-                        <select id="language" class="hidden-select">
-                            <option value="ru">Русский</option>
-                            <option value="en">English</option>
-                            <option value="uz">O'zbek</option>
-                        </select>
-                    </div>
-                </div>
-                <button id="generate-btn" class="generate-btn-effect">Получить сигнал</button>
-                
-            </div>
-        </div>
-        <div class="main-content">
-            <div class="signal-block">
-                <div class="signal-header">
-                    <div class="header-content">
-                        <span class="signal-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-                            </svg>
-                        </span>
-                        <h2 id="signal-title">Сигнал</h2>
-                    </div>
-                    <span id="signal-time" class="time-badge"></span>
-                </div>
-                <div id="signal-result" class="signal-result">
-                    <div class="signal-placeholder">
-                        Нажмите "Получить сигнал"
-                    </div>
-                </div>
-            </div>
-            <div class="chart-block">
-                <div class="chart-header">
-                    <div class="header-content">
-                        <span class="chart-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 3v18h18"></path>
-                                <path d="M18 9l-5 5-2-2-4 4"></path>
-                            </svg>
-                        </span>
-                        <h2 id="chart-title">Проанализированный график на валютную пару</h2>
-                    </div>
-                </div>
-                <div id="chart" class="chart"></div>
-            </div>
-            <div class="footer">
-                <p>© 2025 TradeAi- Профессиональная торговая аналитика</p>
-            </div>
-        </div>
+
+<div class="container">
+
+<div class="status">
+  <div class="vip">Trade Session</div>
+  <div class="connected">
+    <div class="pulse"></div>
+    Connected
+  </div>
+</div>
+
+<div id="startBlock" class="card">
+
+    <!-- ===== MODE TOGGLE with sliding pill ===== -->
+    <div class="mode-toggle" id="modeToggle" data-mode="auto">
+      <div class="mode-toggle__slider"></div>
+      <button class="mode-btn active" data-mode="auto">Auto</button>
+      <button class="mode-btn" data-mode="manual">Manual</button>
     </div>
-    <script src="script.js"></script>
+
+    <!-- Блок с гифкой -->
+    <div class="desc gif-block">
+        <img src="load.GIF" alt="Loading...">
+    </div>
+    <!-- Оригинальный текст -->
+    <div class="desc">
+    This program is designed to analyze the market during trading sessions.<br>
+    Always follow proper risk management and money management.<br>
+    Press the button below to get your signal.
+  </div>
+
+  <!-- ===== MANUAL SELECTION (hidden by default) ===== -->
+  <div id="manualBlock" class="hidden">
+    <div class="manual-label">Currency pair</div>
+    <div class="pair-grid" id="pairGrid"></div>
+
+    <div class="manual-label">Expiry time</div>
+    <div class="time-grid" id="timeGrid"></div>
+  </div>
+
+  <button class="main-btn" onclick="startSignal()">GET SIGNAL</button>
+</div>
+
+<div id="signalBlock" class="card hidden">
+  <div class="chart-wrapper">
+    <div id="chart" class="chart-box"></div>
+  </div>
+
+  <div id="pairBox" class="signal-box pair-box"></div>
+  <div id="timeBox" class="signal-box time-box"></div>
+
+  <div id="timer" class="timer-wrap hidden">
+    <div class="bar">
+      <div id="progress" class="progress"></div>
+    </div>
+    <div id="timerText" class="timer-text"></div>
+  </div>
+
+  <div id="resultBox" class="signal-box"></div>
+
+  <button class="back-btn" onclick="resetApp()">Back</button>
+</div>
+
+<div class="card">
+  <div id="tradeList"></div>
+</div>
+
+<div class="footer">
+Copyright © 2026 Trade Session Bot | All Rights Reserved
+</div>
+
+</div>
+
+<div id="overlay" class="overlay hidden">
+  <div class="loader"></div>
+  <p>Analyzing...</p>
+</div>
+
+<!-- ================== post‑timer overlay ================== -->
+<div id="postTimerOverlay" class="post-overlay hidden">
+  <div id="questionBlock" class="post-content">
+    <div class="desc" style="font-size:16px; margin-bottom:20px;">Did your trade turn a profit?</div>
+    <div class="btn-row">
+      <button id="yesBtn" class="profit-btn yes-btn">Yes</button>
+      <button id="noBtn" class="profit-btn no-btn">No</button>
+    </div>
+  </div>
+  <div id="congratBlock" class="post-content hidden">
+    <div class="desc" style="font-size:18px;">Congratulations!</div>
+  </div>
+  <div id="infoBlock" class="post-content hidden">
+    <div class="desc">
+      This is normal – according to money management rules – you should open an "overlapping trade"
+<br><br>
+1. Multiply the trade amount by x3<br>
+2. Set the expiry time to 2 minutes<br>
+3. Open a trade in the same direction<br><br>
+Do not open more than three overlapping trades in a row!
+    </div>
+    <button id="backFromInfoBtn" class="back-btn" style="margin-top:10px;">Back</button>
+  </div>
+</div>
+<!-- ================== end of overlay ================== -->
+
+<script>
+
+/* ============================================================
+   REAL FOREX PAIRS (no OTC)
+   ============================================================ */
+const REAL_PAIRS = [
+  "EUR/USD", "GBP/USD", "USD/JPY", "USD/CHF", "USD/CAD", "AUD/USD", "NZD/USD",
+  "EUR/GBP", "EUR/JPY", "EUR/CHF", "EUR/CAD", "EUR/AUD", "EUR/NZD",
+  "GBP/JPY", "GBP/CHF", "GBP/CAD", "GBP/AUD", "GBP/NZD",
+  "AUD/JPY", "AUD/CAD", "AUD/CHF", "AUD/NZD",
+  "CAD/JPY", "CAD/CHF", "CHF/JPY",
+  "NZD/JPY", "NZD/CAD", "NZD/CHF"
+];
+
+/* Expiry times (minutes) */
+const TIMES = [2, 3, 5, 7];
+
+/* ============================================================
+   MODE STATE
+   ============================================================ */
+let mode = "auto";
+let manualPair = null;
+let manualTime = null;
+
+/* ============================================================
+   MODE TOGGLE (with sliding pill)
+   ============================================================ */
+const modeToggle = document.getElementById('modeToggle');
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    mode = btn.dataset.mode;
+    modeToggle.setAttribute('data-mode', mode);   // двигает ползунок
+
+    const manualBlock = document.getElementById('manualBlock');
+    if (mode === 'manual') manualBlock.classList.remove('hidden');
+    else manualBlock.classList.add('hidden');
+  });
+});
+
+/* ============================================================
+   PAIR GRID
+   ============================================================ */
+function renderPairGrid(){
+  const grid = document.getElementById('pairGrid');
+  grid.innerHTML = REAL_PAIRS.map(p =>
+    `<button class="pair-chip" data-pair="${p}">${p}</button>`
+  ).join('');
+
+  grid.querySelectorAll('.pair-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      manualPair = btn.dataset.pair;
+      grid.querySelectorAll('.pair-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+}
+
+/* ============================================================
+   TIME GRID
+   ============================================================ */
+function renderTimeGrid(){
+  const grid = document.getElementById('timeGrid');
+  grid.innerHTML = TIMES.map(t =>
+    `<button class="time-chip" data-time="${t}">${t}m</button>`
+  ).join('');
+
+  grid.querySelectorAll('.time-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      manualTime = +btn.dataset.time;
+      grid.querySelectorAll('.time-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+}
+
+renderPairGrid();
+renderTimeGrid();
+
+const pairs = REAL_PAIRS;
+
+/* ============================================================
+   TIMER / TRADES / SIGNAL LOGIC
+   ============================================================ */
+let timerRAF;
+let endTimestamp = 0;
+let startTimestamp = 0;
+
+let snowflakes = [];
+
+/* TRADES */
+function createTrade(){
+  let isWin=Math.random()<0.87;
+
+  let value;
+  if(isWin){
+    value="+"+(Math.random()*79.88+7.12).toFixed(2)+"$";
+  }else{
+    value="-"+[5,10,15][Math.floor(Math.random()*3)]+"$";
+  }
+
+  let div=document.createElement("div");
+  div.className="trade-row";
+  div.innerHTML=`<div>trader id ${Math.floor(Math.random()*9999)}****</div>
+  <div class="${isWin?'green':'red'}">${value}</div>`;
+  return div;
+}
+
+function initTrades(){
+  const list=document.getElementById("tradeList");
+  for(let i=0;i<5;i++){
+    let el=createTrade();
+    list.appendChild(el);
+    setTimeout(()=>el.classList.add("show"),50);
+  }
+  loopTrades();
+}
+
+function loopTrades(){
+  setTimeout(()=>{
+    const list=document.getElementById("tradeList");
+    let el=createTrade();
+    list.prepend(el);
+    setTimeout(()=>el.classList.add("show"),50);
+
+    if(list.children.length>5){
+      list.lastElementChild.remove();
+    }
+
+    loopTrades();
+  },8000+Math.random()*5000);
+}
+
+pairBox.addEventListener("touchstart",()=>pairBox.classList.add("active"));
+pairBox.addEventListener("touchend",()=>pairBox.classList.remove("active"));
+
+/* ============================================================
+   START SIGNAL — respects Auto / Manual mode
+   ============================================================ */
+async function startSignal(){
+  let pair, minutes;
+
+  if (mode === 'auto') {
+    pair    = REAL_PAIRS[Math.floor(Math.random() * REAL_PAIRS.length)];
+    minutes = TIMES[Math.floor(Math.random() * TIMES.length)];
+  } else {
+    if (!manualPair || !manualTime) {
+      alert('Please select a currency pair and expiry time');
+      return;
+    }
+    pair    = manualPair;
+    minutes = manualTime;
+  }
+
+  overlay.classList.remove("hidden");
+  await wait(3000);
+  overlay.classList.add("hidden");
+
+  startBlock.classList.add("hidden");
+  signalBlock.classList.remove("hidden");
+
+  runSignal(pair, minutes);
+}
+
+async function runSignal(pair, minutes){
+
+  const now = new Date();
+  const endTime = new Date(now);
+  endTime.setMinutes(now.getMinutes()+minutes);
+  endTime.setSeconds(0);
+
+  endTimestamp = endTime.getTime();
+  startTimestamp = Date.now();
+
+  new TradingView.widget({
+    container_id:"chart",
+    symbol:"FX:"+pair.replace('/',''),
+    interval:"1",
+    width:"100%",
+    height:"100%",
+    theme:"dark",
+    hide_volume:true,
+    hide_top_toolbar:true,
+    hide_side_toolbar:true,
+    allow_symbol_change:false,
+    save_image:false,
+    locale:"en"
+  });
+
+  await wait(400);
+  pairBox.innerText=pair;
+  pairBox.classList.add("show");
+
+  await wait(000);
+  // ⬇️ показываем ВРЕМЯ, ДО КОТОРОГО ДЕЙСТВИТЕЛЕН СИГНАЛ, а не длительность
+  timeBox.innerText = endTime.toTimeString().slice(0,5);
+  timeBox.classList.add("show");
+
+  timer.classList.remove("hidden");
+  startSmoothTimer();
+
+  await wait(000);
+  resultBox.innerText=Math.random()>0.5?"BUY ↑":"SELL ↓";
+  resultBox.className="signal-box show "+(resultBox.innerText.includes("BUY")?"buy-box":"sell-box");
+}
+
+function startSmoothTimer(){
+
+  cancelAnimationFrame(timerRAF);
+
+  const startDiff = Math.floor((endTimestamp - startTimestamp)/1000);
+  let timerExpired = false;
+
+  function update(){
+    const now = Date.now();
+    const diff = Math.max(0, (endTimestamp - now)/1000);
+
+    const min=Math.floor(diff/60);
+    const sec=Math.floor(diff%60);
+
+    const totalMin=Math.floor(startDiff/60);
+    const totalSec=startDiff%60;
+
+    timerText.innerText=
+      `${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')} / ${String(totalMin).padStart(2,'0')}:${String(totalSec).padStart(2,'0')}`;
+
+    const percent = diff / startDiff;
+    progress.style.width = (percent*100)+"%";
+
+    if(diff>0){
+      timerRAF=requestAnimationFrame(update);
+    } else {
+      progress.style.width = '0%';
+      timerText.innerText = `00:00 / ${String(totalMin).padStart(2,'0')}:${String(totalSec).padStart(2,'0')}`;
+      if(!timerExpired){
+        timerExpired = true;
+        onTimerEnd();
+      }
+    }
+  }
+
+  update();
+}
+
+function onTimerEnd() {
+  setTimeout(() => {
+    document.getElementById('postTimerOverlay').classList.remove('hidden');
+  }, 1000);
+}
+
+pairBox.onclick=()=>{
+  navigator.clipboard.writeText(pairBox.innerText);
+};
+
+function resetApp(){
+  signalBlock.classList.add("hidden");
+  startBlock.classList.remove("hidden");
+  chart.innerHTML="";
+  cancelAnimationFrame(timerRAF);
+
+  pairBox.className="signal-box pair-box";
+  timeBox.className="signal-box time-box";
+  resultBox.className="signal-box";
+  timer.classList.add("hidden");
+}
+
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+
+/* ---------------- snow / overlay logic ---------------- */
+
+function startSnowfall() {
+  const container = document.body;
+  for (let i = 0; i < 50; i++) {
+    let flake = document.createElement('div');
+    flake.className = 'snowflake';
+    flake.innerHTML = '$';
+    flake.style.left = Math.random() * 100 + '%';
+    flake.style.animationDuration = (Math.random() * 3 + 3) + 's';
+    flake.style.animationDelay = Math.random() * 2 + 's';
+    flake.style.fontSize = (Math.random() * 1.5 + 0.8) + 'em';
+    container.appendChild(flake);
+    snowflakes.push(flake);
+  }
+}
+
+function stopSnowfall() {
+  snowflakes.forEach(flake => flake.remove());
+  snowflakes = [];
+}
+
+function hidePostOverlayAndReset() {
+  const overlay = document.getElementById('postTimerOverlay');
+  overlay.classList.add('hidden');
+  document.getElementById('questionBlock').classList.remove('hidden');
+  document.getElementById('congratBlock').classList.add('hidden');
+  document.getElementById('infoBlock').classList.add('hidden');
+  stopSnowfall();
+  resetApp();
+}
+
+document.getElementById('yesBtn').addEventListener('click', () => {
+  document.getElementById('questionBlock').classList.add('hidden');
+  document.getElementById('congratBlock').classList.remove('hidden');
+  startSnowfall();
+
+  setTimeout(() => {
+    stopSnowfall();
+    const overlay = document.getElementById('postTimerOverlay');
+    overlay.style.opacity = '0';
+    overlay.addEventListener('transitionend', function handler() {
+      hidePostOverlayAndReset();
+      overlay.style.opacity = '1';
+      overlay.removeEventListener('transitionend', handler);
+    });
+  }, 4000);
+});
+
+document.getElementById('noBtn').addEventListener('click', () => {
+  document.getElementById('questionBlock').classList.add('hidden');
+  document.getElementById('infoBlock').classList.remove('hidden');
+});
+
+document.getElementById('backFromInfoBtn').addEventListener('click', () => {
+  hidePostOverlayAndReset();
+});
+
+initTrades();
+
+</script>
+
 </body>
 </html>
