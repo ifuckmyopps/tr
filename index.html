@@ -217,47 +217,21 @@ body::after{
 .tab.active::after{width:100%}
 .tab:not(.active):hover{color:var(--text-2)}
 
-.hero-gif{
+/* ═══════════════════════════════════════════════════════════
+   MINI LIVE CHART — smooth eased shifts, stable Y-range
+═══════════════════════════════════════════════════════════ */
+.hero-chart{
+  position:relative;
   margin:8px 0 0;
   aspect-ratio:16/10;
   overflow:hidden;
-  position:relative;
-  background:var(--bg-1);
+  background:#06080d;
   border:1px solid var(--line);
 }
-.hero-gif img{
-  width:100%;height:100%;
-  object-fit:cover;
+.hero-chart canvas{
+  width:100%;
+  height:100%;
   display:block;
-  filter:contrast(1.05) saturate(.9);
-  opacity:.9;
-}
-.hero-gif::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(180deg, transparent 40%, rgba(5,5,5,.75));
-  pointer-events:none;
-}
-.hero-gif__label{
-  position:absolute;
-  bottom:12px;left:14px;
-  font-size:9.5px;
-  color:var(--text-2);
-  letter-spacing:.2em;
-  text-transform:uppercase;
-  font-weight:600;
-  z-index:1;
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-.hero-gif__label::before{
-  content:"";
-  width:5px;height:5px;
-  background:var(--gold);
-  box-shadow:0 0 6px rgba(255,176,32,.9);
-  animation:blink 2s ease-in-out infinite;
 }
 
 .lead{
@@ -430,15 +404,15 @@ body::after{
 
 .direction{
   display:none;
-  margin-top:20px;
-  padding:36px 24px 32px;
+  margin-top:16px;
+  padding:22px 20px 20px;
   border-radius:var(--r);
   position:relative;
   overflow:hidden;
 }
 .direction.show{
   display:block;
-  animation:dirIn .55s cubic-bezier(.22,1,.36,1);
+  animation:dirIn .5s cubic-bezier(.22,1,.36,1);
 }
 @keyframes dirIn{
   from{opacity:0;transform:scale(.96)}
@@ -454,28 +428,27 @@ body::after{
 }
 
 .direction__arrow{
-  font-size:44px;
+  font-size:26px;
   line-height:.9;
   font-weight:400;
-  margin-bottom:8px;
-  letter-spacing:-.02em;
+  margin-bottom:6px;
 }
 .direction.buy .direction__arrow{color:var(--buy)}
 .direction.sell .direction__arrow{color:var(--sell)}
 
 .direction__word{
   font-family:'JetBrains Mono',monospace;
-  font-size:68px;
+  font-size:44px;
   line-height:.9;
   font-weight:700;
-  letter-spacing:-.04em;
+  letter-spacing:-.03em;
 }
 .direction.buy .direction__word{color:var(--buy)}
 .direction.sell .direction__word{color:var(--sell)}
 
 .direction__hint{
-  margin-top:16px;
-  font-size:10px;
+  margin-top:12px;
+  font-size:9.5px;
   letter-spacing:.24em;
   text-transform:uppercase;
   font-weight:700;
@@ -486,7 +459,7 @@ body::after{
 }
 .direction__hint::before{
   content:"";
-  width:20px;height:1px;
+  width:16px;height:1px;
   background:currentColor;
 }
 
@@ -495,11 +468,17 @@ body::after{
   grid-template-columns:repeat(3,1fr);
   border-top:1px solid var(--line);
   border-bottom:1px solid var(--line);
-  margin-top:20px;
+  margin-top:18px;
 }
 .metric{
-  padding:16px 0;
+  padding:16px 8px;
   border-right:1px solid var(--line);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  text-align:center;
 }
 .metric:last-child{border-right:none}
 .metric__label{
@@ -508,7 +487,8 @@ body::after{
   letter-spacing:.2em;
   text-transform:uppercase;
   font-weight:700;
-  margin-bottom:6px;
+  line-height:1;
+  white-space:nowrap;
 }
 .metric__value{
   font-family:'JetBrains Mono',monospace;
@@ -517,19 +497,36 @@ body::after{
   color:var(--text);
   letter-spacing:-.01em;
   font-variant-numeric:tabular-nums;
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:16px;
 }
 .metric__value.gold{color:var(--gold)}
 .metric__value.mono{font-variant-numeric:tabular-nums}
 
-.metric__pips{display:flex;gap:2px;margin-top:6px}
-.metric__pips span{
-  width:12px;height:2px;
-  background:var(--text-4);
+.metric__pips{
+  display:flex;
+  gap:3px;
+  height:16px;
+  align-items:center;
+  justify-content:center;
 }
-.metric__pips span.on{background:var(--gold);box-shadow:0 0 6px rgba(255,176,32,.7)}
+.metric__pips span{
+  width:12px;
+  height:3px;
+  background:var(--text-4);
+  border-radius:0;
+  transition:background .3s ease, box-shadow .3s ease;
+}
+.metric__pips span.on{
+  background:var(--gold);
+  box-shadow:0 0 6px rgba(255,176,32,.7);
+}
 
 .progress-wrap{
-  margin-top:20px;
+  margin-top:18px;
 }
 .progress-head{
   display:flex;
@@ -563,7 +560,7 @@ body::after{
 }
 
 .actions{
-  margin-top:20px;
+  margin-top:18px;
 }
 .action{
   width:100%;
@@ -591,7 +588,7 @@ body::after{
   gap:10px;
   width:100%;
   padding:18px;
-  margin-top:20px;
+  margin-top:18px;
   font-size:10.5px;
   font-weight:700;
   letter-spacing:.2em;
@@ -1188,7 +1185,7 @@ body::after{
 
 @media (max-width:340px){
   .hero__title{font-size:34px}
-  .direction__word{font-size:56px}
+  .direction__word{font-size:36px}
   .winrate-big__num{font-size:44px}
   .modal{padding:28px 22px}
 }
@@ -1208,9 +1205,6 @@ body::after{
       <span class="wordmark__sub">AI</span>
     </div>
     <div class="status-row">
-      <div class="status-item">
-        <span id="sessionText">—</span>
-      </div>
       <div class="status-item online" id="connectionPill">
         <span class="led"></span>
         <b id="connectionText">Live</b>
@@ -1245,9 +1239,8 @@ body::after{
         </button>
       </div>
 
-      <div class="hero-gif">
-        <img src="load.GIF" alt="">
-        <div class="hero-gif__label">Real-time market scan</div>
+      <div class="hero-chart">
+        <canvas id="miniChart"></canvas>
       </div>
 
       <div class="lead">
@@ -1327,7 +1320,7 @@ body::after{
       <div class="actions">
         <button class="action" id="copyPairBtn">
           <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13"/><path d="M5 15 H4 A2 2 0 0 1 2 13 V4 A2 2 0 0 1 4 2 H13 A2 2 0 0 1 15 4 V5"/></svg>
-          Copy Pair &amp; Direction
+          Copy Pair
         </button>
       </div>
 
@@ -1467,7 +1460,7 @@ body::after{
       </div>
       <p class="about-text">
         <b>Trade Session AI Signal</b><br>
-        Version 5.2 · Client-side demo<br><br>
+        Version 5.6 · Client-side demo<br><br>
         This is a demo environment. Signals are simulated for illustration
         purposes only. Real trading involves significant risk.
       </p>
@@ -1637,17 +1630,183 @@ function toast(msg, type = 'success', dur = 2600){
   setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 200); }, dur);
 }
 
-/* SESSION */
-function updateSession(){
-  const h = new Date().getUTCHours();
-  let s = 'Closed';
-  if (h >= 7 && h < 12) s = 'London';
-  else if (h >= 12 && h < 16) s = 'LDN·NY';
-  else if (h >= 16 && h < 21) s = 'New York';
-  else if (h >= 0 && h < 7) s = 'Tokyo';
-  document.getElementById('sessionText').textContent = s;
+/* ═══════════════════════════════════════════════════════════
+   MINI LIVE CHART
+   - свечи стоят на месте
+   - раз в такт: плавный easing-сдвиг влево (700ms)
+   - пауза 400ms
+   - Y-диапазон фиксирован, расширяется только при вылете свечи
+   ============================================================ */
+function startMiniChart(){
+  const c = document.getElementById('miniChart');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const DPR = Math.min(2, window.devicePixelRatio || 1);
+  let W = 0, H = 0;
+
+  function resize(){
+    const r = c.getBoundingClientRect();
+    if (r.width === 0) return;
+    W = r.width; H = r.height;
+    c.width = W * DPR; c.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const COUNT      = 50;     // свечей на экране
+  const SHIFT_MS   = 700;    // длительность сдвига
+  const PAUSE_MS   = 400;    // пауза после сдвига
+
+  const candles = [];        // стабильный массив
+  let incoming  = null;      // свеча, которая въедет справа
+  let price     = 100;
+  let trend     = (Math.random() - 0.5) * 0.25;
+
+  // фиксированный диапазон по Y
+  let rangeMin = 0;
+  let rangeMax = 0;
+
+  function makeCandle(){
+    const o  = price;
+    // мягкий тренд + маленький шум
+    trend = trend * 0.94 + (Math.random() - 0.5) * 0.35;
+    const c2 = o + trend * 0.9 + (Math.random() - 0.5) * 1.4;
+    const hi = Math.max(o, c2) + Math.random() * 0.5;
+    const lo = Math.min(o, c2) - Math.random() * 0.5;
+    price = c2;
+    return { o, c: c2, hi, lo };
+  }
+
+  // полный пересчёт диапазона
+  function recalcRange(){
+    let mn = Infinity, mx = -Infinity;
+    for (let i = 0; i < candles.length; i++){
+      const k = candles[i];
+      if (k.lo < mn) mn = k.lo;
+      if (k.hi > mx) mx = k.hi;
+    }
+    if (incoming){
+      if (incoming.lo < mn) mn = incoming.lo;
+      if (incoming.hi > mx) mx = incoming.hi;
+    }
+    const pad = (mx - mn) * 0.06;
+    rangeMin = mn - pad;
+    rangeMax = mx + pad;
+  }
+
+  // расширение диапазона под одну свечу (без сужения)
+  function extendRangeFor(k){
+    let changed = false;
+    if (k.lo < rangeMin){ rangeMin = k.lo; changed = true; }
+    if (k.hi > rangeMax){ rangeMax = k.hi; changed = true; }
+    return changed;
+  }
+
+  // init
+  for (let i = 0; i < COUNT; i++) candles.push(makeCandle());
+  incoming = makeCandle();
+  recalcRange();
+
+  const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+
+  let state = 'pause';        // 'pause' | 'shift'
+  let lastPauseStart = performance.now();
+
+  function draw(offset){
+    if (W === 0 || H === 0) return;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // тонкая сетка
+    ctx.strokeStyle = 'rgba(255,255,255,.032)';
+    ctx.lineWidth = 1;
+    for (let i = 1; i < 8; i++) {
+      const x = (W / 8) * i;
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let i = 1; i < 5; i++) {
+      const y = (H / 5) * i;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+
+    const range = (rangeMax - rangeMin) || 1;
+    const padTop = H * 0.10;
+    const padBot = H * 0.10;
+    const usable = H - padTop - padBot;
+    const cw = W / COUNT;
+    const bw = Math.max(2, cw * 0.55);
+
+    // рисуем candles[0..COUNT-1], затем incoming (справа)
+    for (let i = 0; i <= COUNT; i++){
+      const k = i < COUNT ? candles[i] : incoming;
+      const x = i * cw + cw / 2 - offset;
+      if (x < -cw || x > W + cw) continue;
+
+      const yo = padTop + usable - ((k.o - rangeMin) / range) * usable;
+      const yc = padTop + usable - ((k.c - rangeMin) / range) * usable;
+      const yh = padTop + usable - ((k.hi - rangeMin) / range) * usable;
+      const yl = padTop + usable - ((k.lo - rangeMin) / range) * usable;
+      const up = k.c >= k.o;
+
+      ctx.strokeStyle = up ? 'rgba(16,185,129,.85)' : 'rgba(239,68,68,.85)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, yh);
+      ctx.lineTo(x, yl);
+      ctx.stroke();
+
+      const top = Math.min(yo, yc);
+      const bh = Math.max(1.2, Math.abs(yc - yo));
+      ctx.fillStyle = up ? 'rgba(16,185,129,.92)' : 'rgba(239,68,68,.92)';
+      ctx.fillRect(x - bw / 2, top, bw, bh);
+    }
+  }
+
+  function tick(now){
+    const cw = W / COUNT;
+
+    if (state === 'pause'){
+      if (now - lastPauseStart >= PAUSE_MS){
+        state = 'shift';
+        shiftStart = now;
+      }
+      draw(0);
+    } else {
+      const t = Math.min(1, (now - shiftStart) / SHIFT_MS);
+      const eased = easeOutCubic(t);
+      const offset = eased * cw;
+      draw(offset);
+
+      if (t >= 1){
+        // фиксируем сдвиг: убираем левую свечу, пришедшую — в конец
+        candles.shift();
+        candles.push(incoming);
+        incoming = makeCandle();
+
+        // расширяем диапазон под новую incoming (без сужения),
+        // полный пересчёт делаем редко — раз в 12 сдвигов
+        extendRangeFor(incoming);
+        shiftCount++;
+        if (shiftCount >= 12){
+          recalcRange();
+          shiftCount = 0;
+        }
+
+        state = 'pause';
+        lastPauseStart = now;
+        draw(0);
+      }
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  let shiftStart = 0;
+  let shiftCount = 0;
+
+  requestAnimationFrame(tick);
 }
-setInterval(updateSession, 60000);
 
 function updateConnection(){
   const pill = document.getElementById('connectionPill');
@@ -1974,12 +2133,11 @@ document.getElementById('noBtn').addEventListener('click', () => {
 });
 document.getElementById('backFromInfoBtn').addEventListener('click', () => { sndClick(); hideModalAndReset(); });
 
-/* COPY */
+/* COPY — ONLY PAIR */
 document.getElementById('copyPairBtn').addEventListener('click', () => {
   const pair = document.getElementById('signalPair').textContent;
-  const dir = document.getElementById('directionWord').textContent;
-  if (navigator.clipboard) navigator.clipboard.writeText(pair + ' ' + dir);
-  sndSuccess(); toast('Copied: ' + pair + ' ' + dir);
+  if (navigator.clipboard) navigator.clipboard.writeText(pair);
+  sndSuccess(); toast('Copied: ' + pair);
 });
 
 /* STATS */
@@ -2143,13 +2301,13 @@ document.getElementById('onboardStartBtn').addEventListener('click', () => {
 
 /* MAIN */
 document.getElementById('getSignalBtn').addEventListener('click', startSignal);
-document.getElementById('backBtn').addEventListener('click', () => { sndClick(); resetApp(); });
+document.getElementById('backBtn').addEventListener('click', () => { sndClick(); hideModalAndReset(); });
 
 /* INIT */
+startMiniChart();
 renderPairGrid();
 renderTimeGrid();
 initTrades();
-updateSession();
 updateConnection();
 renderStats();
 renderHistory();
