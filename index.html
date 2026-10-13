@@ -680,7 +680,7 @@ body::before{
 
         <div class="indicators-row">
           <svg viewBox="0 0 24 24"><path d="M3 17 L8 11 L12 14 L17 6 L21 9"/></svg>
-          <span id="indicatorsText">RSI · MACD · EMA / 120 свечей</span>
+          <span id="indicatorsText">RSI / 120 свечей</span>
         </div>
 
         <button class="adv-row" id="advancedBtn" type="button">
@@ -1148,7 +1148,7 @@ var PAIRS = {
 var DURATIONS = [1,2,3,5,7,10,15,30];
 var INDICATOR_LIST = ['RSI','MACD','EMA','Bollinger','Stochastic','Ichimoku','ATR','ADX','VWAP','OBV'];
 var DEFAULT_ANALYSIS = {
-  indicators:{ RSI:true, MACD:true, EMA:true, Bollinger:false, Stochastic:false, Ichimoku:false, ATR:false, ADX:false, VWAP:false, OBV:false },
+  indicators:{ RSI:true, MACD:false, EMA:false, Bollinger:false, Stochastic:false, Ichimoku:false, ATR:false, ADX:false, VWAP:false, OBV:false },
   minConfidence:60, depth:120
 };
 
@@ -2099,8 +2099,11 @@ if (resetDataBtn){
   resetDataBtn.addEventListener('click', function(){
     if (!confirm(t('toast_reset_q'))) return;
     localStorage.removeItem(STORAGE.signals);
+    localStorage.removeItem(STORAGE.analysis);
     signals = [];
-    persist(); renderStats(); renderHistory();
+    analysis = JSON.parse(JSON.stringify(DEFAULT_ANALYSIS));
+    editBuffer = JSON.parse(JSON.stringify(analysis));
+    persist(); renderStats(); renderHistory(); updateIndicatorsText();
     sndSuccess(); toast(t('toast_reset'));
   });
 }
