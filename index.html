@@ -478,23 +478,7 @@ body::before{
 @keyframes toastOut{to{opacity:0;transform:translateY(-8px)}}
 
 /* ============ ANALYZING ============ */
-/* z-index поднят выше nav (5000) и toasts (6000) */
-.analyzing{
-  position:fixed;inset:0;
-  background:var(--bg);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:99999;
-  padding:20px;gap:24px;
-}
-.analyzing::before{
-  content:"";
-  position:absolute;inset:0;
-  z-index:-1;
-  pointer-events:none;
-  background:
-    radial-gradient(700px 400px at 50% -20%, rgba(250,120,56,.09), transparent 70%),
-    radial-gradient(500px 300px at 100% 100%, rgba(250,120,56,.05), transparent 70%);
-}
+.analyzing{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;padding:20px;gap:24px}
 .analyzing.hidden{display:none}
 .analyzing__mark{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--a);letter-spacing:.24em;text-transform:uppercase;font-weight:600;display:flex;align-items:center;gap:10px}
 .analyzing__mark::before,.analyzing__mark::after{content:"";width:22px;height:1px;background:var(--a);opacity:.4}
