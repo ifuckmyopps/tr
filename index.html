@@ -478,7 +478,22 @@ body::before{
 @keyframes toastOut{to{opacity:0;transform:translateY(-8px)}}
 
 /* ============ ANALYZING ============ */
-.analyzing{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;padding:20px;gap:24px}
+.analyzing{
+  position:fixed;inset:0;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:99999;
+  padding:20px;gap:24px;
+}
+.analyzing::before{
+  content:"";
+  position:absolute;inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:
+    radial-gradient(700px 400px at 50% -20%, rgba(250,120,56,.09), transparent 70%),
+    radial-gradient(500px 300px at 100% 100%, rgba(250,120,56,.05), transparent 70%);
+}
 .analyzing.hidden{display:none}
 .analyzing__mark{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--a);letter-spacing:.24em;text-transform:uppercase;font-weight:600;display:flex;align-items:center;gap:10px}
 .analyzing__mark::before,.analyzing__mark::after{content:"";width:22px;height:1px;background:var(--a);opacity:.4}
@@ -556,21 +571,6 @@ body::before{
 .sheet__btn--cancel:hover{background:var(--card2);color:var(--t);border-color:var(--b2)}
 .sheet__btn--apply{background:var(--a);color:#fff;border:1px solid var(--a)}
 .sheet__btn--apply:hover{background:#ff8a4a;box-shadow:0 8px 20px rgba(250,120,56,.35)}
-
-/* ============ ONBOARDING ============ */
-.onboard{position:fixed;inset:0;background:var(--bg);z-index:8000;display:flex;align-items:center;justify-content:center;padding:28px 24px;transition:opacity .4s ease}
-.onboard.hidden{display:none;opacity:0}
-.onboard__card{max-width:380px;width:100%}
-.onboard__eyebrow{font-size:10px;color:var(--a);letter-spacing:.22em;text-transform:uppercase;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
-.onboard__eyebrow::before{content:"";width:20px;height:1px;background:var(--a)}
-.onboard__title{font-size:34px;line-height:1.05;font-weight:800;letter-spacing:-.035em;margin-bottom:14px}
-.onboard__title em{font-style:normal;color:var(--a)}
-.onboard__sub{font-size:13px;color:var(--tm);line-height:1.65;margin-bottom:30px;max-width:340px}
-.onboard__list{display:flex;flex-direction:column;margin-bottom:30px;border-top:1px solid var(--b)}
-.onboard__item{display:grid;grid-template-columns:34px 1fr;gap:16px;padding:15px 0;border-bottom:1px solid var(--b);align-items:baseline}
-.onboard__item-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--a);font-weight:700}
-.onboard__item-title{font-size:12.5px;font-weight:600;color:var(--t);margin-bottom:3px}
-.onboard__item-desc{font-size:11px;color:var(--td);line-height:1.5}
 
 @media (max-width:400px){
   .hero__title{font-size:30px}
@@ -1004,32 +1004,6 @@ body::before{
   </div>
 </div>
 
-<div class="onboard hidden" id="onboarding">
-  <div class="onboard__card">
-    <div class="onboard__eyebrow" id="welcomeLabel">Добро пожаловать</div>
-    <h1 class="onboard__title" id="onboardTitle">AI-терминал<br>сигналов для<br><em>серьёзных трейдеров.</em></h1>
-    <p class="onboard__sub" id="onboardSub">Точные сигналы, чёткое направление, без лишнего. Создан для трейдеров Pocket Option, ценящих дисциплину.</p>
-    <div class="onboard__list">
-      <div class="onboard__item">
-        <div class="onboard__item-num">01</div>
-        <div><div class="onboard__item-title" id="o1Title">Режим Авто или Ручной</div><div class="onboard__item-desc" id="o1Desc">Позвольте AI выбрать или укажите пару сами.</div></div>
-      </div>
-      <div class="onboard__item">
-        <div class="onboard__item-num">02</div>
-        <div><div class="onboard__item-title" id="o2Title">Чёткое направление BUY / SELL</div><div class="onboard__item-desc" id="o2Desc">Живой график, отсчёт, оценка качества.</div></div>
-      </div>
-      <div class="onboard__item">
-        <div class="onboard__item-num">03</div>
-        <div><div class="onboard__item-title" id="o3Title">История и статистика</div><div class="onboard__item-desc" id="o3Desc">Отслеживайте победы, серии и разбивку направлений.</div></div>
-      </div>
-    </div>
-    <button class="cta" id="onboardStartBtn" type="button" style="justify-content:center">
-      <span id="enterTerminalLabel">Войти в терминал</span>
-      <span class="cta__arrow">→</span>
-    </button>
-  </div>
-</div>
-
 <script>
 (function(){
 'use strict';
@@ -1077,13 +1051,7 @@ var I18N = {
     mm:'Мани-менеджмент', normal:'Это нормально.',
     open_overlap:'Откройте «перекрывающую сделку» по правилам:',
     overlap_rules:'1. Умножьте сумму сделки на <b>×3</b><br>2. Установите экспирацию <b>2 минуты</b><br>3. Откройте сделку <b>в том же направлении</b><br><br>Не открывайте больше <b>трёх</b> перекрывающих сделок подряд.',
-    understood:'Понятно', welcome:'Добро пожаловать',
-    onboard_title:'AI-терминал<br>сигналов для<br><em>серьёзных трейдеров.</em>',
-    onboard_sub:'Точные сигналы, чёткое направление, без лишнего. Создан для трейдеров Pocket Option, ценящих дисциплину.',
-    o1_title:'Режим Авто или Ручной', o1_desc:'Позвольте AI выбрать или укажите пару сами.',
-    o2_title:'Чёткое направление BUY / SELL', o2_desc:'Живой график, отсчёт, оценка качества.',
-    o3_title:'История и статистика', o3_desc:'Отслеживайте победы, серии и разбивку направлений.',
-    enter:'Войти в терминал',
+    understood:'Понятно',
     precise:'Точнее под вашу стратегию', analysis:'Настройки анализа',
     tech_ind:'Технические индикаторы', min_conf:'Минимальная уверенность',
     depth:'Глубина анализа', conf_note:'Уверенность отражает согласованность индикаторов и не является вероятностью прибыли.',
@@ -1093,7 +1061,7 @@ var I18N = {
     toast_select:'Выберите пару и время',
     toast_copied:'Скопировано: {v}',
     toast_csv:'CSV экспортирован', toast_nocsv:'Нечего экспортировать',
-    toast_reset:'Все данные сброшены', toast_welcome:'Добро пожаловать в Trade Session',
+    toast_reset:'Все данные сброшены',
     toast_reset_q:'Сбросить все данные?',
     toast_ind_needed:'Выберите хотя бы один индикатор',
     stats_default:'Начните торговать, чтобы увидеть статистику.',
@@ -1143,13 +1111,7 @@ var I18N = {
     mm:'Money Management', normal:'This is normal.',
     open_overlap:'Open an "overlapping trade" per the rules:',
     overlap_rules:'1. Multiply the trade amount by <b>×3</b><br>2. Set expiry to <b>2 minutes</b><br>3. Open a trade in the <b>same direction</b><br><br>Do not open more than <b>three</b> overlapping trades in a row.',
-    understood:'Understood', welcome:'Welcome',
-    onboard_title:'The AI signal<br>terminal for<br><em>serious traders.</em>',
-    onboard_sub:'Precise signals, clear direction, no clutter. Built for Pocket Option traders who value discipline.',
-    o1_title:'Auto or Manual mode', o1_desc:'Let AI choose, or pick your own pair.',
-    o2_title:'Clear BUY / SELL direction', o2_desc:'Live chart, countdown, quality rating.',
-    o3_title:'History & statistics', o3_desc:'Track wins, streaks and direction split.',
-    enter:'Enter Terminal',
+    understood:'Understood',
     precise:'Precise for your strategy', analysis:'Analysis settings',
     tech_ind:'Technical indicators', min_conf:'Minimum confidence',
     depth:'Analysis depth', conf_note:'Confidence reflects indicator consensus and is not a guarantee of profit.',
@@ -1159,7 +1121,7 @@ var I18N = {
     toast_select:'Select pair and time',
     toast_copied:'Copied: {v}',
     toast_csv:'CSV exported', toast_nocsv:'Nothing to export',
-    toast_reset:'All data reset', toast_welcome:'Welcome to Trade Session',
+    toast_reset:'All data reset',
     toast_reset_q:'Reset all data?',
     toast_ind_needed:'Select at least one indicator',
     stats_default:'Start trading to see your performance statistics.',
@@ -1190,7 +1152,7 @@ var DEFAULT_ANALYSIS = {
   minConfidence:60, depth:120
 };
 
-var STORAGE = { signals:'pk_signals_v6', settings:'pk_settings_v6', onboarded:'pk_onboarded_v6', analysis:'pk_analysis_v6' };
+var STORAGE = { signals:'pk_signals_v6', settings:'pk_settings_v6', analysis:'pk_analysis_v6' };
 
 var market = 'crypto';
 var toolMode = 'auto';
@@ -1427,9 +1389,6 @@ function applyLang(lang){
     tradeResultLabel:'trade_result', didProfitLabel:'did_profit', markResultLabel:'mark_result',
     congratsLabel:'congrats', congratsSubLabel:'congrats_sub',
     mmLabel:'mm', normalLabel:'normal', openOverlapLabel:'open_overlap',
-    welcomeLabel:'welcome', onboardTitle:'onboard_title', onboardSub:'onboard_sub',
-    o1Title:'o1_title', o1Desc:'o1_desc', o2Title:'o2_title', o2Desc:'o2_desc',
-    o3Title:'o3_title', o3Desc:'o3_desc', enterTerminalLabel:'enter',
     preciseEyebrow:'precise', analysisTitle:'analysis', techIndLabel:'tech_ind',
     minConfLabel:'min_conf', analysisDepthLabel:'depth', confidenceNote:'conf_note'
   };
@@ -1930,7 +1889,6 @@ function finalizeSignal(result){
   var s = signals.find(function(x){ return x.id === currentSignal.id; });
   if (!s) return;
   if (result === 'skip'){
-    // Пользователь не входил в сделку — удаляем сигнал из истории
     signals = signals.filter(function(x){ return x.id !== currentSignal.id; });
   } else {
     s.result = result;
@@ -2199,30 +2157,11 @@ if (langBtn){
   });
 }
 
-function checkOnboarding(){
-  if (!localStorage.getItem(STORAGE.onboarded)){
-    document.getElementById('onboarding').classList.remove('hidden');
-  }
-}
-
-var onboardStartBtn = document.getElementById('onboardStartBtn');
-if (onboardStartBtn){
-  onboardStartBtn.addEventListener('click', function(){
-    sndSuccess(); haptic(15);
-    var el = document.getElementById('onboarding');
-    el.style.opacity = '0';
-    setTimeout(function(){ el.classList.add('hidden'); el.style.opacity = '1'; }, 400);
-    localStorage.setItem(STORAGE.onboarded, '1');
-    toast(t('toast_welcome'));
-  });
-}
-
 applyLang(currentLang);
 startMiniChart();
 initTrades();
 renderStats();
 renderHistory();
-checkOnboarding();
 
 buildPairSelect();
 buildDurationSelect();
