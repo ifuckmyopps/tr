@@ -130,14 +130,14 @@ body::before{
 
 /* ============ MINI CHART ============ */
 .hero-chart{
-  position:relative;margin:0 0 16px;aspect-ratio:16/10;overflow:hidden;
+  position:relative;margin:0 0 20px;aspect-ratio:16/10;overflow:hidden;
   background:#101018;border:1px solid var(--b);border-radius:var(--r);
 }
 .hero-chart canvas{width:100%;height:100%;display:block}
 
 /* ============ CARD ============ */
-.card{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:16px 14px;margin-bottom:14px}
-.card__head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.card{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:16px 14px;margin-bottom:20px}
+.card__head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
 .card__title{font-size:15px;font-weight:700;color:var(--t);letter-spacing:-.01em}
 .card__badge{font-size:9px;font-weight:700;letter-spacing:.1em;padding:4px 8px;border-radius:100px;background:var(--ad);color:var(--a);border:1px solid var(--ab);white-space:nowrap}
 .card__pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tm);padding:7px 12px;border:1px solid var(--b);border-radius:100px;background:rgba(255,255,255,.02);margin-bottom:16px}
@@ -186,7 +186,7 @@ body::before{
 .select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:11px;height:11px;stroke:var(--td);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
 
 /* ============ INDICATORS ROW ============ */
-.indicators-row{display:flex;align-items:center;gap:10px;padding:4px 4px;background:#1e1e28;border:1px solid var(--b);border-radius:10px;font-size:11.5px;color:var(--tm);margin-bottom:10px;overflow:hidden}
+.indicators-row{display:flex;align-items:center;gap:10px;padding:4px 4px;background:#1e1e28;border:1px solid var(--b);border-radius:10px;font-size:11.5px;color:var(--tm);margin-bottom:8px;overflow:hidden}
 .indicators-row svg{width:14px;height:14px;flex-shrink:0;stroke:var(--a);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .indicators-row span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--tm)}
 
@@ -429,7 +429,7 @@ body::before{
 .winrate-comment{max-width:160px;text-align:right;font-size:11px;color:var(--tm);line-height:1.55}
 
 .stat-table{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--b)}
-.stat-item{padding:18px 0;border-right:1px solid var(--b)}
+.stat-item{padding:18px 8px;border-right:1px solid var(--b)}
 .stat-item:nth-child(even){border-right:none}
 .stat-item__label{font-size:9px;color:var(--td);letter-spacing:.18em;text-transform:uppercase;font-weight:700;margin-bottom:8px}
 .stat-item__value{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--t);font-variant-numeric:tabular-nums}
@@ -624,7 +624,7 @@ body::before{
           <em>За секунды.</em>
         </h1>
         <p class="hero__sub" id="heroSub">
-          <strong>Trade Session AI</strong> анализирует рыночные данные и генерирует высоковероятные сигналы для Pocket Option.
+          <strong>Trade Session Bot</strong> анализирует рыночные данные и генерирует высоковероятные сигналы для Pocket Option.
         </p>
       </div>
 
@@ -640,9 +640,9 @@ body::before{
       <div class="card">
         <div class="card__head">
           <div class="card__title" id="builderTitle">Конструктор сигнала</div>
-          <div class="card__badge">Trade Session Core</div>
+          <div class="card__badge">Trade Session</div>
         </div>
-        <div class="card__pill" id="signalsLimitText">Сигналы без ограничений</div>
+      <!--  <div class="card__pill" id="signalsLimitText">Сигналы без ограничений</div>   -->   
 
         <div class="builder-grid">
           <div class="builder-col">
@@ -806,7 +806,7 @@ body::before{
 
     <div class="stat-table">
       <div class="stat-item">
-        <div class="stat-item__label" id="sTotal">Всего</div>
+        <div class="stat-item__label" id="sTotal">Запрошено сигналов</div>
         <div class="stat-item__value" id="totalSignals">0</div>
         <div class="stat-item__sub" id="totalSignalsSub">—</div>
       </div>
@@ -816,21 +816,21 @@ body::before{
         <div class="stat-item__sub" id="sDirSplit">направления</div>
       </div>
       <div class="stat-item">
-        <div class="stat-item__label" id="sBest">Лучшая серия</div>
-        <div class="stat-item__value buy" id="bestStreak">0</div>
-        <div class="stat-item__sub" id="sWinsRow">побед подряд</div>
+        <div class="stat-item__label" id="sWins">Плюсовых</div>
+        <div class="stat-item__value buy" id="winsCount">0</div>
+        <div class="stat-item__sub" id="sWinsRow">сделок в плюс</div>
       </div>
       <div class="stat-item">
-        <div class="stat-item__label" id="sWorst">Худшая серия</div>
-        <div class="stat-item__value sell" id="worstStreak">0</div>
-        <div class="stat-item__sub" id="sLossesRow">поражений подряд</div>
+        <div class="stat-item__label" id="sLosses">Минусовых</div>
+        <div class="stat-item__value sell" id="lossesCount">0</div>
+        <div class="stat-item__sub" id="sLossesRow">сделок в минус</div>
       </div>
     </div>
 
     <div class="spark-wrap">
       <div class="section__head">
         <div class="section__label" id="cumulativeLabel">Накопительный результат</div>
-        <div class="section__count" id="last30Label">последние 30</div>
+        <div class="section__count" id="last50Label">последние 50</div>
       </div>
       <svg viewBox="0 0 300 60" preserveAspectRatio="none">
         <path id="sparkArea" fill="rgba(250,120,56,.08)" d=""/>
@@ -1012,7 +1012,7 @@ var I18N = {
   ru: {
     hero_eyebrow:'Генератор сигналов',
     hero_title:'Точные торговые<br>сигналы.<br><em>За секунды.</em>',
-    hero_sub:'<strong>Trade Session AI</strong> анализирует рыночные данные и генерирует высоковероятные сигналы для Pocket Option.',
+    hero_sub:'<strong>Trade Session Bot</strong> анализирует рыночные данные и генерирует высоковероятные сигналы для Pocket Option.',
     builder_hero_title:'Ваш следующий сигнал.',
     builder_hero_sub:'Выберите рынок. Настройте анализ. Решение — за вами.',
     builder_title:'Конструктор сигнала', signals_limit:'Сигналы без ограничений',
@@ -1029,10 +1029,10 @@ var I18N = {
     archive:'Архив', history_title:'История сигналов.',
     all_signals:'Все сигналы',
     performance:'Показатели', stats_title:'Ваша статистика.',
-    winrate:'Винрейт', s_total:'Всего', s_buysell:'BUY / SELL', direction_split:'направления',
-    s_best:'Лучшая серия', wins_in_row:'побед подряд',
-    s_worst:'Худшая серия', losses_in_row:'поражений подряд',
-    cumulative:'Накопительный результат', last_30:'последние 30',
+    winrate:'Винрейт', s_total:'Запрошено сигналов', s_buysell:'BUY / SELL', direction_split:'направления',
+    s_wins:'Плюсовых', wins_row:'сделок в плюс',
+    s_losses:'Минусовых', losses_row:'сделок в минус',
+    cumulative:'Накопительный результат', last_50:'последние 50',
     config:'Конфигурация', settings_title:'Настройки.', feedback:'Обратная связь',
     set_sound:'Звуки', set_sound_desc:'Клики и уведомления',
     set_haptic:'Вибрация', set_haptic_desc:'Вибро-отклик при сигналах',
@@ -1072,7 +1072,7 @@ var I18N = {
   en: {
     hero_eyebrow:'Signal Generator',
     hero_title:'Precise trading<br>signals.<br><em>In seconds.</em>',
-    hero_sub:'<strong>Trade Session AI</strong> analyzes live market data and generates high-probability signals for Pocket Option.',
+    hero_sub:'<strong>Trade Session Bot</strong> analyzes live market data and generates high-probability signals for Pocket Option.',
     builder_hero_title:'Your next signal.',
     builder_hero_sub:'Choose market. Configure analysis. Decision is yours.',
     builder_title:'Signal Builder', signals_limit:'Unlimited signals',
@@ -1089,10 +1089,10 @@ var I18N = {
     archive:'Archive', history_title:'Signal history.',
     all_signals:'All Signals',
     performance:'Performance', stats_title:'Your statistics.',
-    winrate:'Win rate', s_total:'Total', s_buysell:'Buy / Sell', direction_split:'direction split',
-    s_best:'Best Streak', wins_in_row:'wins in a row',
-    s_worst:'Worst Streak', losses_in_row:'losses in a row',
-    cumulative:'Cumulative Result', last_30:'last 30',
+    winrate:'Win rate', s_total:'Requested signals', s_buysell:'Buy / Sell', direction_split:'direction split',
+    s_wins:'Wins', wins_row:'winning trades',
+    s_losses:'Losses', losses_row:'losing trades',
+    cumulative:'Cumulative Result', last_50:'last 50',
     config:'Configuration', settings_title:'Settings.', feedback:'Feedback',
     set_sound:'Sound effects', set_sound_desc:'Clicks and notifications',
     set_haptic:'Haptic feedback', set_haptic_desc:'Vibration on signal events',
@@ -1374,8 +1374,8 @@ function applyLang(lang){
     histEyebrow:'archive', histTitle:'history_title', allSignalsLabel:'all_signals',
     perfEyebrow:'performance', statsTitle:'stats_title', winrateLabel:'winrate',
     sTotal:'s_total', sBuySell:'s_buysell', sDirSplit:'direction_split',
-    sBest:'s_best', sWinsRow:'wins_in_row', sWorst:'s_worst', sLossesRow:'losses_in_row',
-    cumulativeLabel:'cumulative', last30Label:'last_30',
+    sWins:'s_wins', sWinsRow:'wins_row', sLosses:'s_losses', sLossesRow:'losses_row',
+    cumulativeLabel:'cumulative', last50Label:'last_50',
     configEyebrow:'config', settingsTitle:'settings_title',
     feedbackLabel:'feedback', setSoundLabel:'set_sound', setSoundDesc:'set_sound_desc',
     setHapticLabel:'set_haptic', setHapticDesc:'set_haptic_desc',
@@ -1963,21 +1963,12 @@ function renderStats(){
   var buys = signals.filter(function(s){ return s.direction === 'BUY'; }).length;
   var sells = signals.filter(function(s){ return s.direction === 'SELL'; }).length;
 
-  var best = 0, worst = 0, run = 0, type = null;
-  signals.forEach(function(s){
-    if (s.result === 'pending') return;
-    if (s.result === type) run++;
-    else { type = s.result; run = 1; }
-    if (s.result === 'win') best = Math.max(best, run);
-    if (s.result === 'loss') worst = Math.max(worst, run);
-  });
-
   document.getElementById('winrateNum').textContent = winrate.toFixed(0);
   document.getElementById('totalSignals').textContent = signals.length;
   document.getElementById('totalSignalsSub').textContent = done.length ? (wins + 'W · ' + losses + 'L') : '—';
   document.getElementById('buySellSplit').textContent = buys + ' / ' + sells;
-  document.getElementById('bestStreak').textContent = best;
-  document.getElementById('worstStreak').textContent = worst;
+  document.getElementById('winsCount').textContent = wins;
+  document.getElementById('lossesCount').textContent = losses;
 
   var c = document.getElementById('winrateComment');
   if (!done.length) c.textContent = t('stats_default');
