@@ -140,8 +140,10 @@ body::before{
 .card__head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
 .card__title{font-size:15px;font-weight:700;color:var(--t);letter-spacing:-.01em}
 .card__badge{font-size:9px;font-weight:700;letter-spacing:.1em;padding:4px 8px;border-radius:100px;background:var(--ad);color:var(--a);border:1px solid var(--ab);white-space:nowrap}
-.card__pill{display:inline-flex;align-items:center;width: 100%;gap:6px;font-size:10px;color:var(--tm);padding:6px 12px;border:1px solid var(--b);border-radius:9px;background:rgba(255,255,255,.02);margin-bottom:10px}
-.card__pill::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--a);box-shadow:0 0 6px rgba(250,120,56,.7)}
+.card__pill{display:inline-flex;align-items:center;width: 100%;gap:6px;font-size:10px;color:var(--tm);padding:6px 12px;border:1px solid var(--b);border-radius:9px;background:rgba(255,255,255,.02);margin-bottom:10px;transition:all .3s ease;}
+.card__pill::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--a);box-shadow:0 0 6px rgba(250,120,56,.7);transition:all .3s ease;}
+.card__pill.closed{color:#f0b3b3;border-color:rgba(239,68,68,.3);}
+.card__pill.closed::before{background:var(--sell);box-shadow:0 0 6px rgba(239,68,68,.7);}
 
 /* ============ BUILDER GRID ============ */
 .builder-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
@@ -588,6 +590,8 @@ body::before{
 .sheet__btn--apply{background:var(--a);color:#fff;border:1px solid var(--a)}
 .sheet__btn--apply:hover{background:#ff8a4a;box-shadow:0 8px 20px rgba(250,120,56,.35)}
 
+    
+    
 @media (max-width:400px){
   .hero__title{font-size:30px}
   .builder-hero__title{font-size:22px}
@@ -603,6 +607,8 @@ body::before{
   .seg__btn{font-size:12px;padding:11px 6px}
   .ind-chip{font-size:11px;padding:10px}
 }
+    
+    
 </style>
 </head>
 <body>
@@ -723,8 +729,10 @@ body::before{
         </span>
       </div>
 
-      <div class="chart-frame">
+         <div class="chart-frame">
         <div id="chart" class="chart-box"></div>
+        <!-- Canvas для имитации реального графика свечей -->
+        <canvas id="mockChartCanvas" class="chart-box hidden" style="position:absolute;inset:0;z-index:10;background:#131722;"></canvas>
       </div>
 
       <div class="direction" id="direction">
@@ -1032,6 +1040,7 @@ var I18N = {
     builder_hero_title:'Ваш следующий сигнал.',
     builder_hero_sub:'Выберите рынок. Настройте анализ. Решение — за вами.',
     builder_title:'Конструктор сигнала', signals_limit:'Сигналы без ограничений',
+    forex_closed_pill:'Важно! Форекс рынок закрыт до {time}. Торгуйте на парах с приставкой ОТС.',
     label_market:'Рынок', label_tool:'Выбор инструмента',
     crypto:'Крипта', forex:'Форекс', auto_pick:'Автовыбор', pick_pair:'Выбрать пару',
     pair_field:'Торговая пара', duration_field:'Длительность', auto:'Авто',
@@ -1092,6 +1101,7 @@ var I18N = {
     builder_hero_title:'Your next signal.',
     builder_hero_sub:'Choose market. Configure analysis. Decision is yours.',
     builder_title:'Signal Builder', signals_limit:'Unlimited signals',
+    forex_closed_pill:'Important! Forex closed until {time}. Trade pairs with OTC prefix.',
     label_market:'Market', label_tool:'Tool selection',
     crypto:'Crypto', forex:'Forex', auto_pick:'Auto pick', pick_pair:'Pick pair',
     pair_field:'Trading pair', duration_field:'Duration', auto:'Auto',
@@ -1158,8 +1168,22 @@ function t(key, vars){
 }
 
 var PAIRS = {
-  crypto: ["BTC/USDT","ETH/USDT","BNB/USDT","SOL/USDT","XRP/USDT","ADA/USDT","DOGE/USDT","DOT/USDT","MATIC/USDT","LINK/USDT","AVAX/USDT","LTC/USDT","ATOM/USDT","UNI/USDT","TRX/USDT","NEAR/USDT"],
-  forex: ["EUR/USD","GBP/USD","USD/JPY","USD/CHF","USD/CAD","AUD/USD","NZD/USD","EUR/GBP","EUR/JPY","EUR/CHF","EUR/CAD","EUR/AUD","EUR/NZD","GBP/JPY","GBP/CHF","GBP/CAD","GBP/AUD","GBP/NZD","AUD/JPY","AUD/CAD","AUD/CHF","AUD/NZD","CAD/JPY","CAD/CHF","CHF/JPY","NZD/JPY","NZD/CAD","NZD/CHF"]
+  crypto: [
+    "BTC/USDT","ETH/USDT","BNB/USDT","SOL/USDT","XRP/USDT","ADA/USDT","DOGE/USDT","DOT/USDT","MATIC/USDT","LINK/USDT","AVAX/USDT","LTC/USDT","ATOM/USDT","UNI/USDT","TRX/USDT","NEAR/USDT",
+    "Avalanche OTC","BCH/EUR","BCH/GBP","BCH/JPY","BNB OTC","BTC/GBP","BTC/JPY","Bitcoin","Bitcoin ETF OTC","Bitcoin OTC","Cardano OTC","Chainlink","Chainlink OTC","Dash","Dogecoin OTC","Ethereum","Ethereum OTC","Litecoin OTC","Polkadot OTC","Polygon OTC","Solana OTC","TRON OTC","Toncoin OTC"
+  ],
+  forex: [
+    "EUR/USD","GBP/USD","USD/JPY","USD/CHF","USD/CAD","AUD/USD","NZD/USD",
+    "EUR/GBP","EUR/JPY","EUR/CHF","EUR/CAD","EUR/AUD","EUR/NZD",
+    "GBP/JPY","GBP/CHF","GBP/CAD","GBP/AUD","GBP/NZD",
+    "AUD/JPY","AUD/CAD","AUD/CHF","AUD/NZD",
+    "CAD/JPY","CAD/CHF","CHF/JPY","NZD/JPY","NZD/CAD","NZD/CHF",
+    "JOD/CNY","KES/USD","MAD/USD","NGN/USD","OMR/CNY","QAR/CNY","SAR/CNY",
+    "TND/USD","USD/BRL","USD/CNH","USD/MYR","USD/PHP","YER/USD","ZAR/USD",
+    "CHF/NOK","UAH/USD","USD/DZD","USD/COP","AED/CNY","USD/SGD","USD/BDT",
+    "USD/ARS","USD/CLP","USD/IDR","EUR/HUF","BHD/CNY","USD/THB","USD/PKR",
+    "USD/MXN","LBP/USD","USD/EGP","EUR/TRY","USD/VND","USD/INR"
+  ]
 };
 var DURATIONS = [1,2,3,5,7,10,15,30];
 var INDICATOR_LIST = ['RSI','MACD','EMA','Bollinger','Stochastic','Ichimoku','ATR','ADX','VWAP','OBV'];
@@ -1185,6 +1209,61 @@ function loadJSON(k, fb){ try{ var r = localStorage.getItem(k); return r ? JSON.
 function saveJSON(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); } catch(_){} }
 function persist(){ saveJSON(STORAGE.signals, signals); saveJSON(STORAGE.settings, settings); saveJSON(STORAGE.analysis, analysis); }
 
+/* ============ FOREX MARKET HOURS ============ */
+function isForexOpen(){
+  var now = new Date();
+  var day = now.getUTCDay();
+  var hour = now.getUTCHours();
+  if (day === 6) return false;
+  if (day === 0) return hour >= 21;
+  if (day === 5) return hour < 21;
+  return true;
+}
+
+function getNextForexOpenTime(){
+  var now = new Date();
+  var day = now.getUTCDay();
+  var daysToAdd;
+  if (day === 6) daysToAdd = 1;
+  else if (day === 0) daysToAdd = 0;
+  else if (day === 5) daysToAdd = 2;
+  else daysToAdd = 7 - day;
+  var d = new Date(now);
+  d.setUTCDate(now.getUTCDate() + daysToAdd);
+  d.setUTCHours(21, 0, 0, 0);
+  var daysRu = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+  var daysEn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var days = currentLang === 'ru' ? daysRu : daysEn;
+  var hh = String(d.getUTCHours()).padStart(2,'0');
+  var mm = String(d.getUTCMinutes()).padStart(2,'0');
+  return days[d.getUTCDay()] + ' ' + hh + ':' + mm + ' GMT';
+}
+
+function getActivePairs(){
+  if (market === 'forex' && !isForexOpen()){
+    return PAIRS.forex.map(function(p){ return p + ' OTC'; });
+  }
+  return PAIRS[market];
+}
+
+function checkForexStatus(){
+  var el = document.getElementById('signalsLimitText');
+  if (!el) return;
+  if (isForexOpen()){
+    el.textContent = t('signals_limit');
+    el.classList.remove('closed');
+  } else {
+    el.textContent = t('forex_closed_pill', { time: getNextForexOpenTime() });
+    el.classList.add('closed');
+  }
+  if (market === 'forex') {
+    buildPairSelect();
+  }
+}
+setInterval(checkForexStatus, 30000);
+window.addEventListener('focus', checkForexStatus);
+
+/* ============ AUDIO ============ */
 var audioCtx = null;
 function ensureAudio(){ if (!audioCtx){ try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(_){} } return audioCtx; }
 function playTone(f, d, ty, v){
@@ -1379,7 +1458,7 @@ function applyLang(lang){
   if (builderHeroSub) builderHeroSub.textContent = t('builder_hero_sub');
 
   var map = {
-    builderTitle:'builder_title', signalsLimitText:'signals_limit',
+    builderTitle:'builder_title',
     labelMarket:'label_market', labelTool:'label_tool',
     labelPair:'pair_field', labelDuration:'duration_field',
     labelAdvanced:'advanced', labelGetSignal:'get_signal',
@@ -1438,6 +1517,7 @@ function applyLang(lang){
   buildDurationSelect();
   updateIndicatorsText();
   updateConnection();
+  checkForexStatus();
 
   var sd = document.getElementById('signalDir');
   if (sd){
@@ -1452,7 +1532,7 @@ function applyLang(lang){
 function buildPairSelect(){
   var sel = document.getElementById('pairSelect');
   if (!sel) return;
-  var list = PAIRS[market];
+  var list = getActivePairs();
   if (toolMode === 'auto'){
     sel.innerHTML = '<option value="">' + t('auto') + '</option>';
     sel.disabled = true;
@@ -1494,6 +1574,7 @@ if (marketSeg){
     market = btn.getAttribute('data-market');
     selectedPair = null;
     buildPairSelect();
+    checkForexStatus();
   });
 }
 
@@ -1681,7 +1762,7 @@ async function startSignal(){
   var pair, minutes = selectedDuration || 5;
 
   if (toolMode === 'auto'){
-    var list = PAIRS[market];
+    var list = getActivePairs();
     pair = list[Math.floor(Math.random() * list.length)];
   } else {
     if (!selectedPair){
@@ -1713,27 +1794,41 @@ async function runSignal(pair, minutes){
   var quality = 3 + Math.floor(Math.random() * 3);
   var expiryStr = endTime.toTimeString().slice(0, 5);
 
-  var tvSymbol = market === 'crypto'
-    ? 'BINANCE:' + pair.replace('/', '')
-    : 'FX:' + pair.replace('/', '');
+  // Проверка: если OTC или Крипта — рисуем свой график
+  var isOtcOrCrypto = pair.includes('OTC') || market === 'crypto';
+  var chartEl = document.getElementById('chart');
+  var mockCanvas = document.getElementById('mockChartCanvas');
 
-  try {
-    new TradingView.widget({
-      container_id: "chart",
-      symbol: tvSymbol,
-      interval: "1",
-      width: "100%", height: "100%",
-      theme: "dark",
-      hide_volume: true,
-      hide_top_toolbar: true,
-      hide_side_toolbar: true,
-      allow_symbol_change: false,
-      save_image: false,
-      locale: "en",
-      backgroundColor: "rgba(16, 16, 24, 1)",
-      gridColor: "rgba(255, 255, 255, 0.04)"
-    });
-  } catch(_){}
+  if (isOtcOrCrypto) {
+    chartEl.classList.add('hidden');
+    mockCanvas.classList.remove('hidden');
+    startMockChart(pair); // Запуск отрисовки
+  } else {
+    stopMockChart(); // Остановка
+    mockCanvas.classList.add('hidden');
+    chartEl.classList.remove('hidden');
+    
+    var cleanPair = pair.replace(/ OTC$/, '');
+    var tvSymbol = 'FX:' + cleanPair.replace('/', '');
+
+    try {
+      new TradingView.widget({
+        container_id: "chart",
+        symbol: tvSymbol,
+        interval: "1",
+        width: "100%", height: "100%",
+        theme: "dark",
+        hide_volume: true,
+        hide_top_toolbar: true,
+        hide_side_toolbar: true,
+        allow_symbol_change: false,
+        save_image: false,
+        locale: "en",
+        backgroundColor: "rgba(19, 23, 34, 1)",
+        gridColor: "rgba(255, 255, 255, 0.04)"
+      });
+    } catch(_){}
+  }
 
   await wait(400);
 
@@ -1796,6 +1891,162 @@ async function runSignal(pair, minutes){
   persist();
   renderHistory();
   renderStats();
+}
+
+// ==========================================
+// === ДВИЖОК РЕАЛИСТИЧНОГО ГРАФИКА (Canvas) ===
+// ==========================================
+var mockRAF = null;
+function startMockChart(pairName) {
+  stopMockChart(); // Останавливаем предыдущий, если был
+  
+  var canvas = document.getElementById('mockChartCanvas');
+  var ctx = canvas.getContext('2d');
+  
+  function resize() {
+    var rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * window.devicePixelRatio;
+    canvas.height = rect.height * window.devicePixelRatio;
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var W = canvas.width / window.devicePixelRatio;
+  var H = canvas.height / window.devicePixelRatio;
+  
+  // Параметры графика
+  var price = 1.08450; 
+  var trend = 0;
+  var candles = [];
+  var cw = 4; // Ширина свечи
+  var gap = 4; // Расстояние между свечами
+  var offset = 0;
+  var scrollSpeed = 0.2; // Скорость прокрутки
+  
+  // Генерация начальных данных
+  var maxCandles = Math.ceil(W / (cw + gap)) + 5;
+  for (var i = 0; i < maxCandles; i++) {
+    candles.push(genCandle());
+  }
+
+  function genCandle() {
+    trend = trend * 0.85 + (Math.random() - 0.5) * 0.001;
+    var o = price;
+    var c = o + trend * (Math.random() * 2);
+    var hi = Math.max(o, c) + (Math.random() * 0.0003);
+    var lo = Math.min(o, c) - (Math.random() * 0.0003);
+    price = c;
+    return { o:o, c:c, hi:hi, lo:lo };
+  }
+
+  function draw() {
+    if (canvas.offsetParent === null) return; // Не рисуем, если скрыто
+
+    W = canvas.width / window.devicePixelRatio;
+    H = canvas.height / window.devicePixelRatio;
+    
+    ctx.clearRect(0, 0, W, H);
+    
+    // 1. Тёмный фон
+    ctx.fillStyle = '#131722';
+    ctx.fillRect(0, 0, W, H);
+    
+    // 2. Сетка
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    ctx.lineWidth = 1;
+    for (var i = 0; i < H; i += H / 6) {
+      ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(W, i); ctx.stroke();
+    }
+    for (var i = 0; i < W; i += W / 6) {
+      ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, H); ctx.stroke();
+    }
+
+    // 3. Расчет диапазона цен
+    var mn = Infinity, mx = -Infinity;
+    for (var i = 0; i < candles.length; i++) {
+      if (candles[i].lo < mn) mn = candles[i].lo;
+      if (candles[i].hi > mx) mx = candles[i].hi;
+    }
+    var range = mx - mn || 1;
+    var padTop = H * 0.1, padBot = H * 0.1;
+    var usableH = H - padTop - padBot;
+
+    // 4. Отрисовка свечей
+    for (var i = 0; i < candles.length; i++) {
+      var c = candles[i];
+      var x = i * (cw + gap) - offset;
+      if (x < -cw || x > W) continue; // Оптимизация (только на экране)
+
+      var yo = padTop + usableH - ((c.o - mn) / range) * usableH;
+      var yc = padTop + usableH - ((c.c - mn) / range) * usableH;
+      var yh = padTop + usableH - ((c.hi - mn) / range) * usableH;
+      var yl = padTop + usableH - ((c.lo - mn) / range) * usableH;
+      var isUp = c.c >= c.o;
+
+      // Тени (фитили)
+      ctx.beginPath();
+      ctx.moveTo(x + cw / 2, yh);
+      ctx.lineTo(x + cw / 2, yl);
+      ctx.strokeStyle = isUp ? '#089981' : '#f23645'; // Зеленый / Красный
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Тело свечи
+      ctx.fillStyle = isUp ? '#089981' : '#f23645';
+      var top = Math.min(yo, yc);
+      var bh = Math.max(1.5, Math.abs(yc - yo));
+      ctx.fillRect(x, top, cw, bh);
+    }
+
+    // 5. Линия текущей цены
+    var lastCandle = candles[candles.length - 1];
+    var lastY = padTop + usableH - ((lastCandle.c - mn) / range) * usableH;
+    
+    ctx.beginPath();
+    ctx.setLineDash([4, 4]);
+    ctx.moveTo(0, lastY);
+    ctx.lineTo(W, lastY);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Метка цены (справа)
+    ctx.fillStyle = lastCandle.c >= lastCandle.o ? '#089981' : '#f23645';
+    var priceTxt = lastCandle.c.toFixed(5);
+    var txtW = 50, txtH = 20;
+    ctx.fillRect(W - txtW, lastY - txtH / 2, txtW, txtH);
+    ctx.fillStyle = '#fff';
+    ctx.font = '10px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(priceTxt, W - txtW / 2, lastY);
+
+    // 6. Водяной знак (название пары)
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+    ctx.font = 'bold 24px "Inter", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(pairName || 'OTC MARKET', W / 2, H / 2);
+
+    // 7. Прокрутка (сдвиг влево)
+    offset += scrollSpeed;
+    if (offset >= (cw + gap)) {
+      offset -= (cw + gap);
+      candles.shift();
+      candles.push(genCandle());
+    }
+
+    mockRAF = requestAnimationFrame(draw);
+  }
+  
+  draw();
+}
+
+function stopMockChart() {
+  if (mockRAF) {
+    cancelAnimationFrame(mockRAF);
+    mockRAF = null;
+  }
 }
 
 function startSmoothTimer(){
@@ -1962,12 +2213,14 @@ if (skipBtn){
 var backFromInfoBtn = document.getElementById('backFromInfoBtn');
 if (backFromInfoBtn) backFromInfoBtn.addEventListener('click', function(){ sndClick(); hideModalAndReset(); });
 
+/* Копирование пары — БЕЗ " OTC" */
 var copyPairBtn = document.getElementById('copyPairBtn');
 if (copyPairBtn){
   copyPairBtn.addEventListener('click', function(){
     var pair = document.getElementById('signalPair').textContent;
-    if (navigator.clipboard) navigator.clipboard.writeText(pair);
-    sndSuccess(); toast(t('toast_copied', { v: pair }));
+    var cleanPair = pair.replace(/ OTC$/, '').trim();
+    if (navigator.clipboard) navigator.clipboard.writeText(cleanPair);
+    sndSuccess(); toast(t('toast_copied', { v: cleanPair }));
   });
 }
 
