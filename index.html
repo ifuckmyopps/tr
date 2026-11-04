@@ -154,7 +154,6 @@ body::before{
 }
 .builder-col__label b{font-family:'JetBrains Mono',monospace;color:var(--t);font-weight:700}
 
-/* Объединённые кнопки в один блок с рамкой */
 .builder-col__btns{
   display:flex;
   flex-direction:column;
@@ -590,8 +589,6 @@ body::before{
 .sheet__btn--apply{background:var(--a);color:#fff;border:1px solid var(--a)}
 .sheet__btn--apply:hover{background:#ff8a4a;box-shadow:0 8px 20px rgba(250,120,56,.35)}
 
-    
-    
 @media (max-width:400px){
   .hero__title{font-size:30px}
   .builder-hero__title{font-size:22px}
@@ -607,8 +604,6 @@ body::before{
   .seg__btn{font-size:12px;padding:11px 6px}
   .ind-chip{font-size:11px;padding:10px}
 }
-    
-    
 </style>
 </head>
 <body>
@@ -729,9 +724,8 @@ body::before{
         </span>
       </div>
 
-         <div class="chart-frame">
+      <div class="chart-frame">
         <div id="chart" class="chart-box"></div>
-        <!-- Canvas для имитации реального графика свечей -->
         <canvas id="mockChartCanvas" class="chart-box hidden" style="position:absolute;inset:0;z-index:10;background:#131722;"></canvas>
       </div>
 
@@ -1167,24 +1161,35 @@ function t(key, vars){
   return s;
 }
 
+// ================= EXACT USER PAIRS =================
 var PAIRS = {
   crypto: [
-    "BTC/USDT","ETH/USDT","BNB/USDT","SOL/USDT","XRP/USDT","ADA/USDT","DOGE/USDT","DOT/USDT","MATIC/USDT","LINK/USDT","AVAX/USDT","LTC/USDT","ATOM/USDT","UNI/USDT","TRX/USDT","NEAR/USDT",
-    "Avalanche OTC","BCH/EUR","BCH/GBP","BCH/JPY","BNB OTC","BTC/GBP","BTC/JPY","Bitcoin","Bitcoin ETF OTC","Bitcoin OTC","Cardano OTC","Chainlink","Chainlink OTC","Dash","Dogecoin OTC","Ethereum","Ethereum OTC","Litecoin OTC","Polkadot OTC","Polygon OTC","Solana OTC","TRON OTC","Toncoin OTC"
+    "Cardano OTC", "Bitcoin ETF OTC", "BNB OTC", "Bitcoin OTC", "Polkadot OTC",
+    "Ethereum OTC", "Litecoin OTC", "Polygon OTC", "Avalanche OTC", "TRON OTC",
+    "Toncoin OTC", "Solana OTC", "Chainlink OTC", "Dogecoin OTC", "Bitcoin"
   ],
   forex: [
-    "EUR/USD","GBP/USD","USD/JPY","USD/CHF","USD/CAD","AUD/USD","NZD/USD",
-    "EUR/GBP","EUR/JPY","EUR/CHF","EUR/CAD","EUR/AUD","EUR/NZD",
-    "GBP/JPY","GBP/CHF","GBP/CAD","GBP/AUD","GBP/NZD",
-    "AUD/JPY","AUD/CAD","AUD/CHF","AUD/NZD",
-    "CAD/JPY","CAD/CHF","CHF/JPY","NZD/JPY","NZD/CAD","NZD/CHF",
-    "JOD/CNY","KES/USD","MAD/USD","NGN/USD","OMR/CNY","QAR/CNY","SAR/CNY",
-    "TND/USD","USD/BRL","USD/CNH","USD/MYR","USD/PHP","YER/USD","ZAR/USD",
-    "CHF/NOK","UAH/USD","USD/DZD","USD/COP","AED/CNY","USD/SGD","USD/BDT",
-    "USD/ARS","USD/CLP","USD/IDR","EUR/HUF","BHD/CNY","USD/THB","USD/PKR",
-    "USD/MXN","LBP/USD","USD/EGP","EUR/TRY","USD/VND","USD/INR"
+    "EUR/USD", "BTC/USD", "XAU/USD", "ETH/USD", "USD/RUB", "USD/JPY", "GBP/USD",
+    "USD/CHF", "AUD/USD", "USD/CAD", "NZD/USD", "EUR/GBP", "EUR/JPY", "GBP/JPY",
+    "AUD/JPY", "CHF/JPY", "EUR/AUD", "EUR/CAD", "GBP/AUD", "GBP/CAD", "AUD/CAD",
+    "AUD/CHF", "NZD/JPY", "NZD/CHF"
+  ],
+  forexOtc: [
+    "AED/CNY OTC", "AUD/CAD OTC", "AUD/USD OTC", "BHD/CNY OTC", "EUR/CHF OTC",
+    "EUR/NZD OTC", "EUR/USD OTC", "GBP/AUD OTC", "LBP/USD OTC", "NZD/JPY OTC",
+    "SAR/CNY OTC", "UAH/USD OTC", "USD/ARS OTC", "USD/CAD OTC", "USD/CLP OTC",
+    "USD/CNH OTC", "USD/EGP OTC", "USD/RUB OTC", "ZAR/USD OTC", "CHF/NOK OTC",
+    "EUR/HUF OTC", "EUR/JPY OTC", "EUR/RUB OTC", "AUD/NZD OTC", "AUD/BRL OTC",
+    "USD/COP OTC", "USD/INR OTC", "USD/SGD OTC", "CAD/CHF OTC", "QAR/CNY OTC",
+    "AUD/JPY OTC", "OMR/CNY OTC", "EUR/GBP OTC", "USD/VND OTC", "AUD/CHF OTC",
+    "USD/THB OTC", "USD/DZD OTC", "NGN/USD OTC", "CAD/JPY OTC", "TND/USD OTC",
+    "USD/BDT OTC", "NZD/USD OTC", "USD/MYR OTC", "USD/PKR OTC", "USD/MXN OTC",
+    "GBP/USD OTC", "USD/PHP OTC", "MAD/USD OTC", "JOD/CNY OTC", "GBP/JPY OTC",
+    "USD/CHF OTC", "KES/USD OTC", "USD/IDR OTC", "CHF/JPY OTC", "USD/JPY OTC"
   ]
 };
+// =====================================================
+
 var DURATIONS = [1,2,3,5,7,10,15,30];
 var INDICATOR_LIST = ['RSI','MACD','EMA','Bollinger','Stochastic','Ichimoku','ATR','ADX','VWAP','OBV'];
 var DEFAULT_ANALYSIS = {
@@ -1240,10 +1245,10 @@ function getNextForexOpenTime(){
 }
 
 function getActivePairs(){
-  if (market === 'forex' && !isForexOpen()){
-    return PAIRS.forex.map(function(p){ return p + ' OTC'; });
+  if (market === 'forex'){
+    return isForexOpen() ? PAIRS.forex : PAIRS.forexOtc;
   }
-  return PAIRS[market];
+  return PAIRS.crypto;
 }
 
 function checkForexStatus(){
@@ -1794,7 +1799,6 @@ async function runSignal(pair, minutes){
   var quality = 3 + Math.floor(Math.random() * 3);
   var expiryStr = endTime.toTimeString().slice(0, 5);
 
-  // Проверка: если OTC или Крипта — рисуем свой график
   var isOtcOrCrypto = pair.includes('OTC') || market === 'crypto';
   var chartEl = document.getElementById('chart');
   var mockCanvas = document.getElementById('mockChartCanvas');
@@ -1802,9 +1806,9 @@ async function runSignal(pair, minutes){
   if (isOtcOrCrypto) {
     chartEl.classList.add('hidden');
     mockCanvas.classList.remove('hidden');
-    startMockChart(pair); // Запуск отрисовки
+    startMockChart(pair); 
   } else {
-    stopMockChart(); // Остановка
+    stopMockChart(); 
     mockCanvas.classList.add('hidden');
     chartEl.classList.remove('hidden');
     
@@ -1893,12 +1897,9 @@ async function runSignal(pair, minutes){
   renderStats();
 }
 
-// ==========================================
-// === ДВИЖОК РЕАЛИСТИЧНОГО ГРАФИКА (Canvas) ===
-// ==========================================
 var mockRAF = null;
 function startMockChart(pairName) {
-  stopMockChart(); // Останавливаем предыдущий, если был
+  stopMockChart();
   
   var canvas = document.getElementById('mockChartCanvas');
   var ctx = canvas.getContext('2d');
@@ -1915,16 +1916,14 @@ function startMockChart(pairName) {
   var W = canvas.width / window.devicePixelRatio;
   var H = canvas.height / window.devicePixelRatio;
   
-  // Параметры графика
   var price = 1.08450; 
   var trend = 0;
   var candles = [];
-  var cw = 4; // Ширина свечи
-  var gap = 4; // Расстояние между свечами
+  var cw = 4; 
+  var gap = 4; 
   var offset = 0;
-  var scrollSpeed = 0.2; // Скорость прокрутки
+  var scrollSpeed = 0.2; 
   
-  // Генерация начальных данных
   var maxCandles = Math.ceil(W / (cw + gap)) + 5;
   for (var i = 0; i < maxCandles; i++) {
     candles.push(genCandle());
@@ -1941,18 +1940,16 @@ function startMockChart(pairName) {
   }
 
   function draw() {
-    if (canvas.offsetParent === null) return; // Не рисуем, если скрыто
+    if (canvas.offsetParent === null) return; 
 
     W = canvas.width / window.devicePixelRatio;
     H = canvas.height / window.devicePixelRatio;
     
     ctx.clearRect(0, 0, W, H);
     
-    // 1. Тёмный фон
     ctx.fillStyle = '#131722';
     ctx.fillRect(0, 0, W, H);
     
-    // 2. Сетка
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
     ctx.lineWidth = 1;
     for (var i = 0; i < H; i += H / 6) {
@@ -1962,7 +1959,6 @@ function startMockChart(pairName) {
       ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, H); ctx.stroke();
     }
 
-    // 3. Расчет диапазона цен
     var mn = Infinity, mx = -Infinity;
     for (var i = 0; i < candles.length; i++) {
       if (candles[i].lo < mn) mn = candles[i].lo;
@@ -1972,11 +1968,10 @@ function startMockChart(pairName) {
     var padTop = H * 0.1, padBot = H * 0.1;
     var usableH = H - padTop - padBot;
 
-    // 4. Отрисовка свечей
     for (var i = 0; i < candles.length; i++) {
       var c = candles[i];
       var x = i * (cw + gap) - offset;
-      if (x < -cw || x > W) continue; // Оптимизация (только на экране)
+      if (x < -cw || x > W) continue; 
 
       var yo = padTop + usableH - ((c.o - mn) / range) * usableH;
       var yc = padTop + usableH - ((c.c - mn) / range) * usableH;
@@ -1984,22 +1979,19 @@ function startMockChart(pairName) {
       var yl = padTop + usableH - ((c.lo - mn) / range) * usableH;
       var isUp = c.c >= c.o;
 
-      // Тени (фитили)
       ctx.beginPath();
       ctx.moveTo(x + cw / 2, yh);
       ctx.lineTo(x + cw / 2, yl);
-      ctx.strokeStyle = isUp ? '#089981' : '#f23645'; // Зеленый / Красный
+      ctx.strokeStyle = isUp ? '#089981' : '#f23645'; 
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      // Тело свечи
       ctx.fillStyle = isUp ? '#089981' : '#f23645';
       var top = Math.min(yo, yc);
       var bh = Math.max(1.5, Math.abs(yc - yo));
       ctx.fillRect(x, top, cw, bh);
     }
 
-    // 5. Линия текущей цены
     var lastCandle = candles[candles.length - 1];
     var lastY = padTop + usableH - ((lastCandle.c - mn) / range) * usableH;
     
@@ -2011,7 +2003,6 @@ function startMockChart(pairName) {
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Метка цены (справа)
     ctx.fillStyle = lastCandle.c >= lastCandle.o ? '#089981' : '#f23645';
     var priceTxt = lastCandle.c.toFixed(5);
     var txtW = 50, txtH = 20;
@@ -2022,13 +2013,11 @@ function startMockChart(pairName) {
     ctx.textBaseline = 'middle';
     ctx.fillText(priceTxt, W - txtW / 2, lastY);
 
-    // 6. Водяной знак (название пары)
     ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
     ctx.font = 'bold 24px "Inter", sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(pairName || 'OTC MARKET', W / 2, H / 2);
 
-    // 7. Прокрутка (сдвиг влево)
     offset += scrollSpeed;
     if (offset >= (cw + gap)) {
       offset -= (cw + gap);
@@ -2087,6 +2076,9 @@ function resetApp(){
   document.getElementById('startBlock').hidden = false;
   var chartEl = document.getElementById('chart');
   if (chartEl) chartEl.innerHTML = '';
+  stopMockChart();
+  document.getElementById('mockChartCanvas').classList.add('hidden');
+  document.getElementById('chart').classList.remove('hidden');
   cancelAnimationFrame(timerRAF);
   document.getElementById('signalPair').textContent = '— / —';
   document.getElementById('signalExpiry').textContent = '--:--';
@@ -2213,7 +2205,6 @@ if (skipBtn){
 var backFromInfoBtn = document.getElementById('backFromInfoBtn');
 if (backFromInfoBtn) backFromInfoBtn.addEventListener('click', function(){ sndClick(); hideModalAndReset(); });
 
-/* Копирование пары — БЕЗ " OTC" */
 var copyPairBtn = document.getElementById('copyPairBtn');
 if (copyPairBtn){
   copyPairBtn.addEventListener('click', function(){
@@ -2373,7 +2364,7 @@ function createTrade(){
   var isBuy = Math.random() > 0.5;
   var value = isWin ? '+' + (Math.random() * 79.88 + 7.12).toFixed(2) + '$' : '-' + [5, 10, 15][Math.floor(Math.random() * 3)] + '$';
   var id = Math.floor(Math.random() * 9999);
-  var allPairs = PAIRS.crypto.concat(PAIRS.forex);
+  var allPairs = PAIRS.crypto.concat(PAIRS.forex, PAIRS.forexOtc);
   var pair = allPairs[Math.floor(Math.random() * allPairs.length)];
   var div = document.createElement('div');
   div.className = 'row';
