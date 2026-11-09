@@ -113,8 +113,8 @@ body::before{
   font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:10px;
 }
 .hero__eyebrow::before{content:"";width:20px;height:1px;background:var(--a)}
-.hero__title{font-size:36px;line-height:1.05;font-weight:800;letter-spacing:-.035em;color:var(--t)}
-.hero__title em{font-style:normal;color:var(--td);font-weight:500}
+.hero__title{font-size:36px;line-height:1.05;font-weight:700;letter-spacing:-.035em;color:var(--t)}
+.hero__title em{font-style:normal;color:#fa7938;font-weight:700}
 .hero__sub{margin-top:14px;font-size:13px;color:var(--tm);line-height:1.65;max-width:380px}
 .hero__sub strong{color:var(--t);font-weight:600}
 
@@ -636,9 +636,8 @@ body::before{
       <div class="hero">
         <div class="hero__eyebrow" id="heroEyebrow">Генератор сигналов</div>
         <h1 class="hero__title" id="heroTitle">
-          Точные торговые<br>
-          сигналы.<br>
-          <em>За секунды.</em>
+          Торговые сигналы<br>
+          сигналы для<em> Pocket Option</em>
         </h1>
         <p class="hero__sub" id="heroSub">
           <strong>Trade Session Bot</strong> анализирует рыночные данные и генерирует высоковероятные сигналы для Pocket Option.
@@ -1029,10 +1028,10 @@ body::before{
 var I18N = {
   ru: {
     hero_eyebrow:'Генератор сигналов',
-    hero_title:'Точные торговые<br>сигналы.<br><em>За секунды.</em>',
-    hero_sub:'<strong>Trade Session Bot</strong> анализирует рыночные данные и генерирует высоковероятные сигналы для Pocket Option.',
+    hero_title:'Торговые сигналы <br>для <em>Pocket Option</em>',
+    hero_sub:'<strong>Trade Session</strong> создан для торговых сессий и помогает принимать решения опираясь на глубокий анализ и десятки индикаторов. Гибкие настройки, сигналы, статистика - все в одном месте!',
     builder_hero_title:'Ваш следующий сигнал.',
-    builder_hero_sub:'Выберите рынок. Настройте анализ. Решение — за вами.',
+    builder_hero_sub:'Сделано специально для трейдеров Pocket Option',
     builder_title:'Конструктор сигнала', signals_limit:'Сигналы без ограничений',
     forex_closed_pill:'Важно! Форекс рынок закрыт до {time}. Торгуйте на парах с приставкой ОТС.',
     label_market:'Рынок', label_tool:'Выбор инструмента',
@@ -1089,11 +1088,11 @@ var I18N = {
     stats_low:'Винрейт {p}%. Улучшите стратегию и мани-менеджмент.'
   },
   en: {
-    hero_eyebrow:'Signal Generator',
-    hero_title:'Precise trading<br>signals.<br><em>In seconds.</em>',
-    hero_sub:'<strong>Trade Session Bot</strong> analyzes live market data and generates high-probability signals for Pocket Option.',
-    builder_hero_title:'Your next signal.',
-    builder_hero_sub:'Choose market. Configure analysis. Decision is yours.',
+   hero_eyebrow: 'Signal Generator',
+  hero_title: 'Trading signals <br>for <em>Pocket Option</em>',
+  hero_sub: '<strong>Trade Session</strong> is built for trading sessions and helps you make decisions based on deep analysis and dozens of indicators. Flexible settings, signals, statistics — all in one place!',
+  builder_hero_title: 'Your next signal.',
+  builder_hero_sub: 'Made specifically for Pocket Option traders',
     builder_title:'Signal Builder', signals_limit:'Unlimited signals',
     forex_closed_pill:'Important! Forex closed until {time}. Trade pairs with OTC prefix.',
     label_market:'Market', label_tool:'Tool selection',
